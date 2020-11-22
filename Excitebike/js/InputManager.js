@@ -25,7 +25,9 @@ class InputManager{
         this.Right_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.D);
 
         this.A = false;
-        this.A_Key.on('down',A_down,this.scene);
+        this.A_Key.on('down',this.A_Down,this.scene);
+        this.B = false;
+        this.B_Key.on('down',this.B_Down,this.scene);
     }
     update(){
         
@@ -35,5 +37,9 @@ class InputManager{
     A_Down(){
         this.A = true;
         console.log("aaa");
+    }
+    B_Down(){
+        this.B = true;
+        console.log("bbb");
     }
 }
