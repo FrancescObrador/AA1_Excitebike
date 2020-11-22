@@ -7,10 +7,10 @@ class gameState extends Phaser.Scene{
 		
 	}
 	create(){
-        
+        this.inputs = new InputManager(this);
 	}
 	
 	update(){
-		
+		this.inputs.update();
 	}
 }
