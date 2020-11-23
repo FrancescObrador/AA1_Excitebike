@@ -1,5 +1,3 @@
-//const { Input } = require("phaser");
-
 class InputManager{
 
     //PDF Instruccions
@@ -11,10 +9,13 @@ class InputManager{
     //  RightArrow: Lower the front during a jump
     //  Select Button: move flag -> Arrows will do it instead
     //  Start Button: start game -> A Button will do it instead
+    //  Ctrl K->C comentar
+    //  Ctrl K->U descomentar
 
-    InputManager(scene){
-        this.scene = scene;
-        this.inputPlugin = new Phaser.Input.InputPlugin(this.scene);
+    constructor(scene){
+
+        this.inputPlugin = new Phaser.Input.InputPlugin(scene);
+        
         this.keyboardPlugin = new Phaser.Input.Keyboard.KeyboardPlugin(this.inputPlugin);
 
         this.A_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -24,22 +25,12 @@ class InputManager{
         this.Left_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.A);
         this.Right_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.D);
 
-        this.A = false;
-        this.A_Key.on('down',this.A_Down,this.scene);
-        this.B = false;
-        this.B_Key.on('down',this.B_Down,this.scene);
+        scene.input.keyboard.addKey(this.A_Key);
+        scene.input.keyboard.addKey(this.B_Key);
+        scene.input.keyboard.addKey(this.Up_Key);
+        scene.input.keyboard.addKey(this.Down_Key);
+        scene.input.keyboard.addKey(this.Left_Key);
+        scene.input.keyboard.addKey(this.Right_Key);
     }
-    update(){
-        
 
-        
-    }
-    A_Down(){
-        this.A = true;
-        console.log("aaa");
-    }
-    B_Down(){
-        this.B = true;
-        console.log("bbb");
-    }
 }
