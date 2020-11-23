@@ -1,4 +1,4 @@
-const { Input } = require("phaser");
+//const { Input } = require("phaser");
 
 class InputManager{
 
