@@ -2,7 +2,7 @@ var config = {
     type: Phaser.AUTO,
     width: 256, 
     height: 240, 
-    scene: [gameState], //Array con los niveles   
+    scene: [gameplay, gameState], //Array con los niveles   // TODO dejar esto como estaba
 	antialias: false,
 	render:{pixelArt:true},
 	scale: {

@@ -11,6 +11,6 @@ class gameState extends Phaser.Scene{
 	}
 	
 	update(){
-		
+
 	}
 }
