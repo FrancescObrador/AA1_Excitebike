@@ -1,22 +1,20 @@
 class StartMenu extends Phaser.Scene{
 	constructor(){
-		//Llamamos al constructor de la escena
 		 super({key: 'StartMenu'});
 	}
 	preload(){
 
-		this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
+		this.load.image('startScreen', "assets/img/initialScreen.png");
 
 	}
 
 	create(){
 
-
-		this.texto = this.add.bitmapText(10, 10, 'nesFont', "SELECTION A", 10);
+		this.menu = this.add.image(0, 0, 'startScreen').setScale(0.25).setOrigin(0);
+		
 	}
 	
 	update(){
 		
 	}
-
 }
