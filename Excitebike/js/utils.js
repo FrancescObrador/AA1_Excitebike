@@ -71,3 +71,8 @@ InstantiateObject(){
 	loadGroup(){
 		this.group1 = this.physics.add.group();
     }
+
+
+    // load a bitmap font
+    this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
+    this.texto = this.add.bitmapText(10, 10, 'nesFont', "SELECTION A", 10);
