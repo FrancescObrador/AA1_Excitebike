@@ -21,15 +21,13 @@ class StartMenu extends Phaser.Scene{
 	create(){
 
 		// Setup inputs
-		this.cursors = this.input.keyboard.createCursorKeys();
-
-		this.cursors.up.on('up', this.CursorUp, this);
-		this.cursors.down.on('up', this.CursorDown, this);
-
-		this.cursors.left.on('up', this.CursorLeft, this);
-		this.cursors.right.on('up', this.CursorRight, this);
-
-		this.cursors.space.on('up', this.LoadTracksScreen, this);
+		this.inputs = new InputManager(this);
+		this.inputs.Up_Key.on('up', this.CursorUp, this);
+		this.inputs.Down_Key.on('up', this.CursorDown, this);
+		this.inputs.Left_Key.on('up', this.CursorLeft, this);
+		this.inputs.Right_Key.on('up', this.CursorRight, this);
+		this.inputs.A_Key.on('up', this.LoadTracksScreen, this);
+		//this.inputs.B_Key.on('up', , this);
 
 		// Setup start screen
 		this.cursorPositions = new Array(0);
