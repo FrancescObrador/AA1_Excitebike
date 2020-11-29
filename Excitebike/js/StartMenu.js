@@ -82,6 +82,10 @@ class StartMenu extends Phaser.Scene{
 				this.currentScreen = screens.DESIGN;
 			}
 		}
+		else if (this.currentScreen == screens.TRACKS){
+			this.scene.start("GamePlay");
+			this.scene.stop("StartMenu");
+		}
 	}
 
 	CursorUp()
