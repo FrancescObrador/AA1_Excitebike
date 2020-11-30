@@ -5,7 +5,7 @@ class GamePlay extends Phaser.Scene{
 
     preload(){
         var ruta = 'assets/img/';
-        this.load.image('backGround', ruta + 'gamePlayBG.png');
+        this.load.image('backGround', ruta + 'Track_1_Base.png');
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
         this.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
@@ -19,7 +19,7 @@ class GamePlay extends Phaser.Scene{
 
     }
     create(){
-        this.menu = this.add.image(0, 0, 'backGround').setScale(0.25).setOrigin(0);
+        this.backGround = this.add.tileSprite(0, 0, 256, 240, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = this.add.sprite(128,20,'motorbike').setOrigin(0.5);
         this.anims.create({
@@ -48,11 +48,12 @@ class GamePlay extends Phaser.Scene{
         });
         this.pilot.anims.play('moving', true);
         this.inputs = new InputManager(this);
-
     }
     update(){
         
-            
+            // Acceder a la velocidad(Hardcodearla por ahora hasta tener el player)
+		//this.bg.tilePositionX += this.speed; // scroll   
+		//this.kirbTest.rotation = this.kirbTest.rotation + 0.05;
          
     }
 }
