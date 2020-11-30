@@ -52,6 +52,7 @@ class GamePlay extends Phaser.Scene{
         this.pilot.maxAcceleration = 1;
         this.pilot.speed = 0;
         this.pilot.maxSpeed = 2;
+        this.pilot.sideSpeed = 25;
         
         
         this.inputs = new InputManager(this);
@@ -68,6 +69,18 @@ class GamePlay extends Phaser.Scene{
         else if(this.pilot.body.velocity.x > this.pilot.maxSpeed) {
             this.pilot.setAccelerationX(0);
             this.pilot.setVelocityX(this.pilot.maxSpeed);
+        }
+
+        if(this.inputs.Up_Key.isDown){
+            this.pilot.body.setVelocityY(-this.pilot.sideSpeed);
+            this.pilot.setTexture('pilotTurnLeft');
+        } 
+        else if(this.inputs.Down_Key.isDown){
+            this.pilot.body.setVelocityY(this.pilot.sideSpeed);
+            this.pilot.setTexture('pilotTurnRight');
+        }
+        else{
+            this.pilot.body.setVelocityY(0);
         }
 
         this.backGround.tilePositionX += this.pilot.body.velocity.x; // scroll  
