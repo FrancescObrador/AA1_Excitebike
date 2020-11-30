@@ -21,7 +21,7 @@ class GamePlay extends Phaser.Scene{
     create(){
         this.backGround = this.add.tileSprite(0, 0, 256, 240, 'backGround').setOrigin(0).setScale(1);
 
-        this.pilot = this.add.sprite(128,20,'motorbike').setOrigin(0.5);
+        this.pilot = this.physics.add.sprite(128,20,'motorbike').setOrigin(0.5);
         this.anims.create({
             key: 'running',
             frames: this.anims.generateFrameNumbers('pilotRunning', { start: 0, end: 1 }),
@@ -47,13 +47,31 @@ class GamePlay extends Phaser.Scene{
             repeat: -1
         });
         this.pilot.anims.play('moving', true);
+        
+        this.pilot.acceleration = 0;
+        this.pilot.maxAcceleration = 1;
+        this.pilot.speed = 0;
+        this.pilot.maxSpeed = 2;
+        
+        
         this.inputs = new InputManager(this);
     }
     update(){
+        if (this.inputs.A_Key.isDown) this.pilot.acceleration = this.pilot.maxAcceleration;
+        else this.pilot.acceleration = -this.pilot.maxAcceleration;
         
-            // Acceder a la velocidad(Hardcodearla por ahora hasta tener el player)
-		//this.bg.tilePositionX += this.speed; // scroll   
-		//this.kirbTest.rotation = this.kirbTest.rotation + 0.05;
+        this.pilot.body.setAccelerationX(this.pilot.acceleration);
+        if(this.pilot.body.velocity.x < 0){
+            this.pilot.setAccelerationX(0);
+            this.pilot.setVelocityX(0);
+        } 
+        else if(this.pilot.body.velocity.x > this.pilot.maxSpeed) {
+            this.pilot.setAccelerationX(0);
+            this.pilot.setVelocityX(this.pilot.maxSpeed);
+        }
+
+        this.backGround.tilePositionX += this.pilot.body.velocity.x; // scroll  
+         
          
     }
 }
