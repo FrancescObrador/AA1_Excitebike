@@ -50,13 +50,15 @@ class GamePlay extends Phaser.Scene{
         this.pilot.anims.play('moving', true);
         
         this.pilot.acceleration = 0.01;
-        this.pilot.maxAcceleration = 2;
         this.pilot.speed = 0;
         this.pilot.maxSpeed = 1.5;
-        this.pilot.sideSpeed = 25;
-        
         
         this.inputs = new InputManager(this);
+
+        // y positions of the 4 lines
+        this.lines = [125, 138, 150, 162];
+        this.currentLine = 0;
+        this.pilot.isOnTween = false;
         
     }
 
@@ -70,15 +72,26 @@ class GamePlay extends Phaser.Scene{
             this.pilot.speed -= this.pilot.acceleration;
         }
     
-
-        if(this.inputs.Up_Key.isDown){
-           
-
-        } 
-        else if(this.inputs.Down_Key.isDown){
-          
+        if(!this.pilot.isOnTween) {
+            if(this.inputs.Up_Key.isDown && this.currentLine > 0){
+                this.currentLine--;
+                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.pilot.isOnTween = true;
+                this.pilot.setTexture('pilotTurnLeft');
+            } 
+            else if(this.inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
+                this.currentLine++;
+                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.pilot.isOnTween = true;
+                this.pilot.setTexture('pilotTurnRight')
+            }
         }
         else{
+
+            if(this.pilot.y == this.lines[this.currentLine]){
+                this.pilot.body.stop();
+                this.pilot.isOnTween = false;
+            }
             
         }
 
