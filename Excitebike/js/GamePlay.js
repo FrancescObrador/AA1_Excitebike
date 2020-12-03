@@ -5,7 +5,7 @@ class GamePlay extends Phaser.Scene{
 
     preload(){
         var ruta = 'assets/img/';
-        this.load.image('backGround', ruta + 'Track_1_Base.png');
+        this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
         this.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
@@ -19,9 +19,10 @@ class GamePlay extends Phaser.Scene{
 
     }
     create(){
-        this.backGround = this.add.tileSprite(0, 0, 256, 240, 'backGround').setOrigin(0).setScale(1);
+        this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
-        this.pilot = this.physics.add.sprite(128,20,'motorbike').setOrigin(0.5);
+        this.pilot = this.physics.add.sprite(config.width/2, 125, 'pilotLoop').setOrigin(0.5);
+       
         this.anims.create({
             key: 'running',
             frames: this.anims.generateFrameNumbers('pilotRunning', { start: 0, end: 1 }),
@@ -48,42 +49,40 @@ class GamePlay extends Phaser.Scene{
         });
         this.pilot.anims.play('moving', true);
         
-        this.pilot.acceleration = 0;
-        this.pilot.maxAcceleration = 1;
+        this.pilot.acceleration = 0.01;
+        this.pilot.maxAcceleration = 2;
         this.pilot.speed = 0;
-        this.pilot.maxSpeed = 2;
+        this.pilot.maxSpeed = 1.5;
         this.pilot.sideSpeed = 25;
         
         
         this.inputs = new InputManager(this);
-    }
-    update(){
-        if (this.inputs.A_Key.isDown) this.pilot.acceleration = this.pilot.maxAcceleration;
-        else this.pilot.acceleration = -this.pilot.maxAcceleration;
         
-        this.pilot.body.setAccelerationX(this.pilot.acceleration);
-        if(this.pilot.body.velocity.x < 0){
-            this.pilot.setAccelerationX(0);
-            this.pilot.setVelocityX(0);
+    }
+
+
+    update(){
+        
+        if (this.inputs.A_Key.isDown && this.pilot.speed < this.pilot.maxSpeed ){    
+            this.pilot.speed += this.pilot.acceleration;
         } 
-        else if(this.pilot.body.velocity.x > this.pilot.maxSpeed) {
-            this.pilot.setAccelerationX(0);
-            this.pilot.setVelocityX(this.pilot.maxSpeed);
+        else if(this.pilot.speed > 0) {
+            this.pilot.speed -= this.pilot.acceleration;
         }
+    
 
         if(this.inputs.Up_Key.isDown){
-            this.pilot.body.setVelocityY(-this.pilot.sideSpeed);
-            this.pilot.setTexture('pilotTurnLeft');
+           
+
         } 
         else if(this.inputs.Down_Key.isDown){
-            this.pilot.body.setVelocityY(this.pilot.sideSpeed);
-            this.pilot.setTexture('pilotTurnRight');
+          
         }
         else{
-            this.pilot.body.setVelocityY(0);
+            
         }
 
-        this.backGround.tilePositionX += this.pilot.body.velocity.x; // scroll  
+        this.backGround.x -= this.pilot.speed; // scroll  
          
          
     }
