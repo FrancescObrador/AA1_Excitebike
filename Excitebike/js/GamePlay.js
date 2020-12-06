@@ -5,7 +5,7 @@ class GamePlay extends Phaser.Scene{
 
     preload(){
         var ruta = 'assets/img/';
-        this.load.image('backGround', ruta + 'Track_1_Base.png');
+        this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
         this.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
@@ -19,9 +19,10 @@ class GamePlay extends Phaser.Scene{
 
     }
     create(){
-        this.backGround = this.add.tileSprite(0, 0, 256, 240, 'backGround').setOrigin(0).setScale(1);
+        this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
-        this.pilot = this.add.sprite(128,20,'motorbike').setOrigin(0.5);
+        this.pilot = this.physics.add.sprite(config.width/2, 125, 'pilotLoop').setOrigin(0.5);
+       
         this.anims.create({
             key: 'running',
             frames: this.anims.generateFrameNumbers('pilotRunning', { start: 0, end: 1 }),
@@ -47,13 +48,55 @@ class GamePlay extends Phaser.Scene{
             repeat: -1
         });
         this.pilot.anims.play('moving', true);
+        
+        this.pilot.acceleration = 0.01;
+        this.pilot.speed = 0;
+        this.pilot.maxSpeed = 1.5;
+        
         this.inputs = new InputManager(this);
+
+        // y positions of the 4 lines
+        this.lines = [125, 138, 150, 162];
+        this.currentLine = 0;
+        this.pilot.isOnTween = false;
+        
     }
+
+
     update(){
         
-            // Acceder a la velocidad(Hardcodearla por ahora hasta tener el player)
-		//this.bg.tilePositionX += this.speed; // scroll   
-		//this.kirbTest.rotation = this.kirbTest.rotation + 0.05;
+        if (this.inputs.A_Key.isDown && this.pilot.speed < this.pilot.maxSpeed ){    
+            this.pilot.speed += this.pilot.acceleration;
+        } 
+        else if(this.pilot.speed > 0) {
+            this.pilot.speed -= this.pilot.acceleration;
+        }
+    
+        if(!this.pilot.isOnTween) {
+            if(this.inputs.Up_Key.isDown && this.currentLine > 0){
+                this.currentLine--;
+                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.pilot.isOnTween = true;
+                this.pilot.setTexture('pilotTurnLeft');
+            } 
+            else if(this.inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
+                this.currentLine++;
+                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.pilot.isOnTween = true;
+                this.pilot.setTexture('pilotTurnRight')
+            }
+        }
+        else{
+
+            if(this.pilot.y == this.lines[this.currentLine]){
+                this.pilot.body.stop();
+                this.pilot.isOnTween = false;
+            }
+            
+        }
+
+        this.backGround.x -= this.pilot.speed; // scroll  
+         
          
     }
 }
