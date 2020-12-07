@@ -18,11 +18,7 @@ class GamePlay extends Phaser.Scene{
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
 
     }
-    create(){
-        this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
-
-        this.pilot = this.physics.add.sprite(config.width/2, 125, 'pilotLoop').setOrigin(0.5);
-       
+    createAnims(){
         this.anims.create({
             key: 'running',
             frames: this.anims.generateFrameNumbers('pilotRunning', { start: 0, end: 1 }),
@@ -47,11 +43,15 @@ class GamePlay extends Phaser.Scene{
             frameRate: 5,
             repeat: -1
         });
-        this.pilot.anims.play('moving', true);
+    }
+    create(){
+        this.createAnims();
+
+        this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
+
+        this.pilot = new Player(this,config.width/2,125);
         
-        this.pilot.acceleration = 0.01;
-        this.pilot.speed = 0;
-        this.pilot.maxSpeed = 1.5;
+        this.pilot.anims.play('moving', true);
         
         this.inputs = new InputManager(this);
 
@@ -64,7 +64,7 @@ class GamePlay extends Phaser.Scene{
 
 
     update(){
-        
+        //this.pilot.setTexture('pilotTurnRight');
         if (this.inputs.A_Key.isDown && this.pilot.speed < this.pilot.maxSpeed ){    
             this.pilot.speed += this.pilot.acceleration;
         } 
@@ -83,7 +83,7 @@ class GamePlay extends Phaser.Scene{
                 this.currentLine++;
                 this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
                 this.pilot.isOnTween = true;
-                this.pilot.setTexture('pilotTurnRight')
+                this.pilot.setTexture('pilotTurnRight');
             }
         }
         else{
