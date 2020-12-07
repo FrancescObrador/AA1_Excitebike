@@ -4,6 +4,8 @@ class GamePlay extends Phaser.Scene{
    }
 
     preload(){
+
+
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
@@ -16,9 +18,24 @@ class GamePlay extends Phaser.Scene{
         this.load.spritesheet('pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
         this.load.image('pilotTurnLeft',ruta + 'pilot_turning_left.png');
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
-
+        this.load.xml('obsts', 'assets/map1Info.xml');
     }
     create(){
+
+        
+
+        var list = this.cache.xml.get('obsts');
+        var obstacles = list.getElementsByTagName('obstacle');
+        for (var i = 0; i < obstacles.length; ++i)
+        {
+            var item = obstacles[i];
+            var type = item.getAttribute('type');
+            var position = item.getAttribute('position');
+            var height = item.getAttribute('height');
+            console.log(String(type) + ' ' + String(position) + ' ' + String(height));
+            // TODO llamar al constructor de obstaculos con el tipo y las posiciones
+        }
+
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = this.physics.add.sprite(config.width/2, 125, 'pilotLoop').setOrigin(0.5);
@@ -99,5 +116,6 @@ class GamePlay extends Phaser.Scene{
          
          
     }
+    
 }
 
