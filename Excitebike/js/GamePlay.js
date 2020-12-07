@@ -50,12 +50,11 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = new Player(this,config.width/2,125);
-        
-        this.pilot.anims.play('moving', true);
+        this.pilot.anims.play('moving',false);
         
         this.inputs = new InputManager(this);
 
-        // y positions of the 4 lines
+        // y positions of the 4 lines  
         this.lines = [125, 138, 150, 162];
         this.currentLine = 0;
         this.pilot.isOnTween = false;
@@ -64,7 +63,7 @@ class GamePlay extends Phaser.Scene{
 
 
     update(){
-        //this.pilot.setTexture('pilotTurnRight');
+
         if (this.inputs.A_Key.isDown && this.pilot.speed < this.pilot.maxSpeed ){    
             this.pilot.speed += this.pilot.acceleration;
         } 
