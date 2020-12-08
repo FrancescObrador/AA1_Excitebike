@@ -50,7 +50,7 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = new Player(this,config.width/2,125);
-        this.pilot.anims.play('moving',false);
+        this.pilot.sprite.anims.play('moving',false);
         
         this.inputs = new InputManager(this);
 
@@ -74,21 +74,21 @@ class GamePlay extends Phaser.Scene{
         if(!this.pilot.isOnTween) {
             if(this.inputs.Up_Key.isDown && this.currentLine > 0){
                 this.currentLine--;
-                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.physics.moveTo(this.pilot.sprite, config.width/2, this.lines[this.currentLine]);
                 this.pilot.isOnTween = true;
-                this.pilot.setTexture('pilotTurnLeft');
+                this.pilot.sprite.setTexture('pilotTurnLeft');
             } 
             else if(this.inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
                 this.currentLine++;
-                this.physics.moveTo(this.pilot, config.width/2, this.lines[this.currentLine]);
+                this.physics.moveTo(this.pilot.sprite, config.width/2, this.lines[this.currentLine]);
                 this.pilot.isOnTween = true;
-                this.pilot.setTexture('pilotTurnRight');
+                this.pilot.sprite.setTexture('pilotTurnRight');
             }
         }
         else{
 
-            if(this.pilot.y == this.lines[this.currentLine]){
-                this.pilot.body.stop();
+            if(this.pilot.sprite.y == this.lines[this.currentLine]){
+                this.pilot.sprite.body.stop();
                 this.pilot.isOnTween = false;
             }
             
