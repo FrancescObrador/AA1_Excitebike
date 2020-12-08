@@ -10,12 +10,16 @@ class Player {
         this.speedY = 30;
         this.maxSpeedX = 1.5;
         this.currentLine = 0;
-        this.isOnTween = false;
+        this.isTurning = false;
+        this.isOnAir = false;
 
         this.lines = [125, 138, 150, 162];
 
-        this.sprite = this.currScene.physics.add.sprite(positionX, positionY,'motorbike');
+        this.sprite = this.currScene.physics.add.sprite(positionX, positionY,'pilotStanding');
         if(!this.animsCreated)this.createAnims();
+        this.sprite.anims.play('moving',false);
+
+
         
     } 
 
@@ -26,38 +30,50 @@ class Player {
         else if(this.speedX > 0) {
             this.speedX -= this.acceleration;
         }
-    
-        if(!this.isOnTween) {
-            if(inputs.Up_Key.isDown && this.currentLine > 0){
-                this.currentLine--;
-                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
-                this.isOnTween = true;
+        if(this.speedX <= 0){
+            this.speedX = 0;
+            this.sprite.setTexture('pilotStanding');
+        }
+        if(!this.isOnAir){
+            if(!this.isTurning) {
+                if(inputs.Up_Key.isDown && this.currentLine > 0){
+                    this.currentLine--;
+                    this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
+                    this.isTurning = true;
+                    
+                    this.turningRight = false;
+                } 
+                else if(inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
+                    this.currentLine++;
+                    this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
+                    this.isTurning = true;
+                    
+                    this.turningRight = true;
+                }
+            }
+            else {
+                if(this.turningRight){
+                    this.sprite.setTexture('pilotTurnRight');
+                }
+                else{
+                    this.sprite.setTexture('pilotTurnLeft');
+                }
+                if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){
+                    this.sprite.body.stop();
+                    this.isTurning = false;
+                }
+                else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
+                    this.sprite.body.stop();
+                    this.isTurning = false;
+                }
+                //aqui podrem fer una iteracio quan acabi el gir
+                if(!this.isTurning){
+                    
+                }
                 
-                this.turningRight = false;
-            } 
-            else if(inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
-                this.currentLine++;
-                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
-                this.isOnTween = true;
-                
-                this.turningRight = true;
             }
         }
-        else {
-            if(this.turningRight){
-                this.sprite.setTexture('pilotTurnRight');
-            }
-            else{
-                this.sprite.setTexture('pilotTurnLeft');
-            }
-            if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){
-                this.sprite.body.stop();
-                this.isOnTween = false;
-            }
-            else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
-                this.sprite.body.stop();
-                this.isOnTween = false;
-            }
+        else{
             
         }
     }

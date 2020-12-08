@@ -16,7 +16,7 @@ class GamePlay extends Phaser.Scene{
         this.load.spritesheet('pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
         this.load.image('pilotTurnLeft',ruta + 'pilot_turning_left.png');
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
-
+        this.load.image('pilotStanding',ruta + 'pilot_standing.png');
     }
     
     create(){
@@ -25,7 +25,7 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = new Player(this,config.width/2,125);
-        this.pilot.sprite.anims.play('moving',false);
+        //this.pilot.sprite.anims.play('moving',false);
         
         this.inputs = new InputManager(this);
 
