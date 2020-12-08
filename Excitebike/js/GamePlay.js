@@ -60,6 +60,8 @@ class GamePlay extends Phaser.Scene{
         this.currentLine = 0;
         this.pilot.isOnTween = false;
         
+        this.ramp = new Obstacle(this, "mud", 10, 1);
+     
     }
 
 
