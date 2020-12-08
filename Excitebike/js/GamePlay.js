@@ -35,7 +35,7 @@ class GamePlay extends Phaser.Scene{
     update(){
 
         this.pilot.customUpdate(this.inputs);
-        this.backGround.x -= this.pilot.speed; // scroll  
+        this.backGround.x -= this.pilot.speedX; // scroll  
          
          
     }

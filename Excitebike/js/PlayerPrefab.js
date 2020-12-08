@@ -6,8 +6,9 @@ class Player {
 
         this.currScene = scene;
         this.acceleration = 0.01;
-        this.speed = 0;
-        this.maxSpeed = 1.5;
+        this.speedX = 0;
+        this.speedY = 30;
+        this.maxSpeedX = 1.5;
         this.currentLine = 0;
         this.isOnTween = false;
 
@@ -19,30 +20,41 @@ class Player {
     } 
 
     customUpdate(inputs){
-        if (inputs.A_Key.isDown && this.speed < this.maxSpeed ){    
-            this.speed += this.acceleration;
+        if (inputs.A_Key.isDown && this.speedX < this.maxSpeedX ){    
+            this.speedX += this.acceleration;
         } 
-        else if(this.speed > 0) {
-            this.speed -= this.acceleration;
+        else if(this.speedX > 0) {
+            this.speedX -= this.acceleration;
         }
     
         if(!this.isOnTween) {
             if(inputs.Up_Key.isDown && this.currentLine > 0){
                 this.currentLine--;
-                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine]);
+                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
                 this.isOnTween = true;
-                this.sprite.setTexture('pilotTurnLeft');
+                
+                this.turningRight = false;
             } 
             else if(inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
                 this.currentLine++;
-                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine]);
+                this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
                 this.isOnTween = true;
-                this.sprite.setTexture('pilotTurnRight');
+                
+                this.turningRight = true;
             }
         }
-        else{
-
-            if(this.sprite.y == this.lines[this.currentLine]){
+        else {
+            if(this.turningRight){
+                this.sprite.setTexture('pilotTurnRight');
+            }
+            else{
+                this.sprite.setTexture('pilotTurnLeft');
+            }
+            if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){
+                this.sprite.body.stop();
+                this.isOnTween = false;
+            }
+            else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
                 this.sprite.body.stop();
                 this.isOnTween = false;
             }
