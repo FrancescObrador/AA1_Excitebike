@@ -4,6 +4,7 @@ class Obstacle extends Phaser.GameObjects.Zone{
         // type defines the width and the hegiht
         var width = 0;
         var height = 0;
+        var positionY = 0;
         var laneSize = 12;
         var allLanesSize = 48;
 
@@ -26,7 +27,7 @@ class Obstacle extends Phaser.GameObjects.Zone{
                 width = 40;
                 height = allLanesSize;
             break;
-            case "bigramp":
+            case "bigRamp":
                 width = 72;
                 height = allLanesSize;
                 break;
@@ -57,9 +58,7 @@ class Obstacle extends Phaser.GameObjects.Zone{
             default:
                 break;
         }
-
-        //TODO Convert Lane to position y - pivot: bottom_left
-        var positionY = lane;
+        
         switch(lane){
             case -1:
             case 0:

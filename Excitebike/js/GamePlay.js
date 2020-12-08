@@ -22,19 +22,20 @@ class GamePlay extends Phaser.Scene{
     }
     create(){
 
-        
-
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
+        var myObstacles = new Array(obstacles.length);
         for (var i = 0; i < obstacles.length; ++i)
         {
             var item = obstacles[i];
             var type = item.getAttribute('type');
             var position = item.getAttribute('position');
-            var height = item.getAttribute('height');
-            console.log(String(type) + ' ' + String(position) + ' ' + String(height));
-            // TODO llamar al constructor de obstaculos con el tipo y las posiciones
+            var lane = item.getAttribute('lane');
+            console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
+            
+            myObstacles[i] = new Obstacle(this, type, position, lane);
         }
+        this.obstacles = myObstacles;
 
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
