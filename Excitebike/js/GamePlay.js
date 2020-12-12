@@ -4,6 +4,8 @@ class GamePlay extends Phaser.Scene{
    }
 
     preload(){
+
+
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
@@ -17,10 +19,27 @@ class GamePlay extends Phaser.Scene{
         this.load.image('pilotTurnLeft',ruta + 'pilot_turning_left.png');
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
         this.load.image('pilotStanding',ruta + 'pilot_standing.png');
+        this.load.xml('obsts', 'assets/map1Info.xml');
     }
     
     create(){
         
+
+
+        var list = this.cache.xml.get('obsts');
+        var obstacles = list.getElementsByTagName('obstacle');
+        var myObstacles = new Array(obstacles.length);
+        for (var i = 0; i < obstacles.length; ++i)
+        {
+            var item = obstacles[i];
+            var type = item.getAttribute('type');
+            var position = item.getAttribute('position');
+            var lane = item.getAttribute('lane');
+            console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
+            
+            myObstacles[i] = new Obstacle(this, type, position, lane);
+        }
+        this.obstacles = myObstacles;
 
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
@@ -29,6 +48,7 @@ class GamePlay extends Phaser.Scene{
         
         this.inputs = new InputManager(this);
 
+        this.ramp = new Obstacle(this, "mud", 10, 1);
     }
 
 
@@ -39,5 +59,6 @@ class GamePlay extends Phaser.Scene{
          
          
     }
+    
 }
 
