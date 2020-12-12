@@ -41,8 +41,8 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = new Player(this,config.width/2,125);
-        //this.pilot.sprite.anims.play('moving',false);
-        this.pilotMapPosition = this.backGround.x + this.pilot.x;
+        
+        this.pilotMapPosition = this.backGround.x + this.pilot.sprite.x;
         
         this.pilot.acceleration = 0.01;
         this.pilot.speed = 0;
@@ -64,13 +64,13 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
         this.backGround.x -= this.pilot.speedX; // scroll  
-        this.pilotMapPosition += this.pilot.speed;
+        this.pilotMapPosition += this.pilot.speedX;
          
        console.log(Math.trunc(this.pilotMapPosition));
 
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
-            if(playerPos >= obstacle.x && playerPos < obstacle.end){
+            if(this.isInside(playerPos, obstacle) ){
                 if(obstacle.type == "tramp")
                 {
                     console.log("a tramp!");
@@ -79,5 +79,15 @@ class GamePlay extends Phaser.Scene{
         });
     }
     
+    isInside(positionX, _obstacle)
+    {
+        if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
+
+            if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) return true;
+        }
+
+        return false;
+    }
+
 }
 
