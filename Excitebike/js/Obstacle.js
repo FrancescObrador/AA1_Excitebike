@@ -1,21 +1,26 @@
-class Obstacle extends Phaser.GameObjects.Zone{
-    
-    constructor(scene, type, positionX, lane){
-        // type defines the width and the hegiht
+class Obstacle {
+    constructor(scene, subType, positionX, lane){ // subtype defines the width and the hegiht
+        
+        this.type = "ramp"; // Default value
+        this.x = positionX;
+        this.end;
         var width = 0;
         var height = 0;
         var positionY = 0;
         var laneSize = 12;
         var allLanesSize = 48;
 
-        switch(type){
+
+        switch(subType){
             case "mud":
                 width = 24;
                 height = laneSize;
+                this.type = "tramp";
                 break;
             case "speed":
                 width = 16;
                 height = laneSize;
+                this.type  = "booster";
                 break;
 
             case "miniRamp":
@@ -50,6 +55,7 @@ class Obstacle extends Phaser.GameObjects.Zone{
             case "grassPatchStart":
                 width = 80;
                 height = allLanesSize;
+                this.type  = "tramp";
                 break;
             case "endRamp":
                 width = 96;
@@ -59,6 +65,8 @@ class Obstacle extends Phaser.GameObjects.Zone{
                 break;
         }
         
+        this.end = this.x + width;
+
         switch(lane){
             case -1:
             case 0:
@@ -76,8 +84,6 @@ class Obstacle extends Phaser.GameObjects.Zone{
             default:
                 break;
         }
-
-        super(scene, positionX, positionY, width, height);
        
         scene.add.existing(this);
     }  

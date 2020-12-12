@@ -4,8 +4,6 @@ class GamePlay extends Phaser.Scene{
    }
 
     preload(){
-
-
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
@@ -20,26 +18,30 @@ class GamePlay extends Phaser.Scene{
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
         this.load.xml('obsts', 'assets/map1Info.xml');
     }
-    create(){
 
+    create(){
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
         var myObstacles = new Array(obstacles.length);
+      
         for (var i = 0; i < obstacles.length; ++i)
         {
             var item = obstacles[i];
             var type = item.getAttribute('type');
             var position = item.getAttribute('position');
             var lane = item.getAttribute('lane');
-            console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
+            //console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
             
             myObstacles[i] = new Obstacle(this, type, position, lane);
         }
+
         this.obstacles = myObstacles;
 
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
-
+        
         this.pilot = this.physics.add.sprite(config.width/2, 125, 'pilotLoop').setOrigin(0.5);
+        
+        this.pilotMapPosition = this.backGround.x + this.pilot.x;
        
         this.anims.create({
             key: 'running',
@@ -70,6 +72,7 @@ class GamePlay extends Phaser.Scene{
         this.pilot.acceleration = 0.01;
         this.pilot.speed = 0;
         this.pilot.maxSpeed = 1.5;
+        this.pilot.onMapX = this.pilot.x;
         
         this.inputs = new InputManager(this);
 
@@ -77,9 +80,6 @@ class GamePlay extends Phaser.Scene{
         this.lines = [125, 138, 150, 162];
         this.currentLine = 0;
         this.pilot.isOnTween = false;
-        
-        this.ramp = new Obstacle(this, "mud", 10, 1);
-     
     }
 
 
@@ -116,8 +116,19 @@ class GamePlay extends Phaser.Scene{
         }
 
         this.backGround.x -= this.pilot.speed; // scroll  
+        this.pilotMapPosition += this.pilot.speed;
          
-         
+       console.log(Math.trunc(this.pilotMapPosition));
+
+        this.obstacles.forEach(obstacle => {
+           var playerPos = Math.trunc(this.pilotMapPosition);
+            if(playerPos >= obstacle.x && playerPos < obstacle.end){
+                if(obstacle.type == "tramp")
+                {
+                    console.log("a tramp!");
+                }
+            }
+        });
     }
     
 }
