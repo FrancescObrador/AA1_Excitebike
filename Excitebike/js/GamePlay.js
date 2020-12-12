@@ -31,11 +31,9 @@ class GamePlay extends Phaser.Scene{
             var type = item.getAttribute('type');
             var position = item.getAttribute('position');
             var lane = item.getAttribute('lane');
-            //console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
             
             myObstacles[i] = new Obstacle(this, type, position, lane);
         }
-
         this.obstacles = myObstacles;
 
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
@@ -43,20 +41,8 @@ class GamePlay extends Phaser.Scene{
         this.pilot = new Player(this,config.width/2,125);
         
         this.pilotMapPosition = this.backGround.x + this.pilot.sprite.x;
-        
-        this.pilot.acceleration = 0.01;
-        this.pilot.speed = 0;
-        this.pilot.maxSpeed = 1.5;
-        
-        this.inputs = new InputManager(this);
 
-        // y positions of the 4 lines
-        this.lines = [125, 138, 150, 162];
-        this.currentLine = 0;
-        this.pilot.isOnTween = false;
-        
-        this.ramp = new Obstacle(this, "mud", 10, 1);
-     
+        this.inputs = new InputManager(this);
     }
 
 
