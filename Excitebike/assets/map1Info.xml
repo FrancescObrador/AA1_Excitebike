@@ -35,5 +35,80 @@
   <obstacle type="mud" position="5384" lane ="2"></obstacle>
   <obstacle type="mud" position="5520" lane ="1"></obstacle>
   <obstacle type="mud" position="5520" lane ="3"></obstacle>  
-  <obstacle type="endRamp" position="5656" lane ="3"></obstacle>  
+  <obstacle type="endRamp" position="5656" lane ="-1"></obstacle>  
+
+  <obstacle type="mud" position="6606" lane ="0"></obstacle>
+  <obstacle type="mud" position="6606" lane ="2"></obstacle>
+  <obstacle type="bigRamp" position="6686" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="7014" lane ="-1"></obstacle>
+  <obstacle type="speed" position="7350" lane ="0"></obstacle>
+  <obstacle type="smallRamp" position="7446" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="7502" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="8014" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="8070" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="8126" lane ="-1"></obstacle>
+  <obstacle type="speed" position="8278" lane ="3"></obstacle>
+  <obstacle type="mud" position="8422" lane ="1"></obstacle>
+  <obstacle type="mud" position="8422" lane ="3"></obstacle>
+  <obstacle type="bigLeftRamp" position="8574" lane ="-1"></obstacle>
+  <obstacle type="bigRightRamp" position="8666" lane ="-1"></obstacle>
+  <obstacle type="miniRamp" position="9054" lane ="2"></obstacle>
+  <obstacle type="speed" position="9310" lane ="3"></obstacle>
+  <obstacle type="miniRamp" position="9342" lane ="2"></obstacle>
+  <obstacle type="miniRamp" position="9662" lane ="2"></obstacle>
+  <obstacle type="smallBump" position="9694" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="9734" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="9774" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="9814" lane ="-1"></obstacle>
+  <obstacle type="bigLeftRamp" position="9998" lane ="-1"></obstacle>
+  <obstacle type="grassPatchStart" position="10070" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="10318" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="10406" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="10526" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="10614" lane ="-1"></obstacle>
+  <obstacle type="mud" position="10902" lane ="1"></obstacle>
+  <obstacle type="mud" position="10902" lane ="3"></obstacle>
+  <obstacle type="mud" position="11014" lane ="0"></obstacle>
+  <obstacle type="mud" position="11014" lane ="2"></obstacle>
+  <obstacle type="mud" position="111150" lane ="1"></obstacle>
+  <obstacle type="mud" position="111150" lane ="3"></obstacle>  
+  <obstacle type="endRamp" position="11286" lane ="-1"></obstacle>   
+  
+  <obstacle type="mud" position="12236" lane ="0"></obstacle>
+  <obstacle type="mud" position="12236" lane ="2"></obstacle>
+  <obstacle type="bigRamp" position="12316" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13052" lane ="-1"></obstacle>
+  <obstacle type="speed" position="12980" lane ="0"></obstacle>
+  <obstacle type="smallRamp" position="13076" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13132" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13644" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13700" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13757" lane ="-1"></obstacle>
+  <obstacle type="speed" position="13908" lane ="3"></obstacle>
+  <obstacle type="mud" position="14051" lane ="1"></obstacle>
+  <obstacle type="mud" position="14051" lane ="3"></obstacle>
+  <obstacle type="bigLeftRamp" position="14204" lane ="-1"></obstacle>
+  <obstacle type="bigRightRamp" position="14296" lane ="-1"></obstacle>
+  <obstacle type="miniRamp" position="14684" lane ="2"></obstacle>
+  <obstacle type="speed" position="14940" lane ="3"></obstacle>
+  <obstacle type="miniRamp" position="14972" lane ="2"></obstacle>
+  <obstacle type="miniRamp" position="15292" lane ="2"></obstacle>
+  <obstacle type="smallBump" position="15324" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="15364" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="15404" lane ="-1"></obstacle>
+  <obstacle type="smallBump" position="15444" lane ="-1"></obstacle>
+  <obstacle type="bigLeftRamp" position="15628" lane ="-1"></obstacle>
+  <obstacle type="grassPatchStart" position="15700" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="15948" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="16036" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="16156" lane ="-1"></obstacle>
+  <obstacle type="longRamp" position="16244" lane ="-1"></obstacle>
+  <obstacle type="mud" position="16532" lane ="1"></obstacle>
+  <obstacle type="mud" position="16532" lane ="3"></obstacle>
+  <obstacle type="mud" position="16643" lane ="0"></obstacle>
+  <obstacle type="mud" position="16643" lane ="2"></obstacle>
+  <obstacle type="mud" position="16779" lane ="1"></obstacle>
+  <obstacle type="mud" position="16779" lane ="3"></obstacle>  
+  <obstacle type="endRamp" position="16916" lane ="-1"></obstacle>  
+
 </obstacles>
