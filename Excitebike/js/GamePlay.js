@@ -21,6 +21,8 @@ class GamePlay extends Phaser.Scene{
         this.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
         this.load.image('pilotStanding',ruta + 'pilot_standing.png');
         this.load.xml('obsts', 'assets/map1Info.xml');
+
+        console.log("resources loaded");
     }
     
     create(){
@@ -35,19 +37,19 @@ class GamePlay extends Phaser.Scene{
             var position = parseInt(item.getAttribute('position'), 10);
             var lane = parseInt(item.getAttribute('lane'), 10);
             
-            myObstacles[i] = new Obstacle(this, type, position, lane); // Aquí hay un bug extraño, no pilla los obstáculos
+            myObstacles[i] = new Obstacle(this, type, position, lane); 
         }
         this.obstacles = myObstacles;
 
         
         this.lap1 = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
         this.lap2 = this.add.image(this.lap1.width, 0, 'backGroundLap2').setOrigin(0).setScale(1);
-        this.lap2 = this.add.image(this.lap1.width + this.lap2.width, 0, 'backGroundLap3').setOrigin(0).setScale(1);
+        this.lap3 = this.add.image(this.lap1.width + this.lap2.width, 0, 'backGroundLap3').setOrigin(0).setScale(1);
        
         this.backGround = this.add.container();
         this.backGround.add([this.lap1, this.lap2, this.lap3]);
 
-        this.pilot = new Player(this,1 );
+        this.pilot = new Player(this, 1 );
         
         this.pilotMapPosition = this.pilot.sprite.x;
 
