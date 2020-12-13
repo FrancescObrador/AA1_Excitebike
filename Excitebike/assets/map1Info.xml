@@ -24,7 +24,7 @@
   <obstacle type="smallBump" position="4144" lane ="-1"></obstacle>
   <obstacle type="smallBump" position="4184" lane ="-1"></obstacle>
   <obstacle type="bigLeftRamp" position="4368" lane ="-1"></obstacle>
-  <obstacle type="grassPatchStart" position="4368" lane ="-1"></obstacle>
+  <obstacle type="grassPatchStart" position="4439" lane ="-1"></obstacle>
   <obstacle type="longRamp" position="4688" lane ="-1"></obstacle>
   <obstacle type="longRamp" position="4776" lane ="-1"></obstacle>
   <obstacle type="longRamp" position="4896" lane ="-1"></obstacle>
