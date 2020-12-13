@@ -4,8 +4,6 @@ class GamePlay extends Phaser.Scene{
    }
 
     preload(){
-
-
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         ruta += 'pilot/';
@@ -23,19 +21,16 @@ class GamePlay extends Phaser.Scene{
     }
     
     create(){
-        
-
-
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
         var myObstacles = new Array(obstacles.length);
+      
         for (var i = 0; i < obstacles.length; ++i)
         {
             var item = obstacles[i];
             var type = item.getAttribute('type');
             var position = item.getAttribute('position');
             var lane = item.getAttribute('lane');
-            console.log(String(type) + ' ' + String(position) + ' ' + String(lane));
             
             myObstacles[i] = new Obstacle(this, type, position, lane);
         }
@@ -44,11 +39,10 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
         this.pilot = new Player(this,config.width/2,125);
-        //this.pilot.sprite.anims.play('moving',false);
         
-        this.inputs = new InputManager(this);
+        this.pilotMapPosition = this.backGround.x + this.pilot.sprite.x;
 
-        this.ramp = new Obstacle(this, "mud", 10, 1);
+        this.inputs = new InputManager(this);
     }
 
 
@@ -56,9 +50,30 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
         this.backGround.x -= this.pilot.speedX; // scroll  
+        this.pilotMapPosition += this.pilot.speedX;
          
-         
+       console.log(Math.trunc(this.pilotMapPosition));
+
+        this.obstacles.forEach(obstacle => {
+           var playerPos = Math.trunc(this.pilotMapPosition);
+            if(this.isInside(playerPos, obstacle) ){
+                if(obstacle.type == "tramp")
+                {
+                    console.log("a tramp!");
+                }
+            }
+        });
     }
     
+    isInside(positionX, _obstacle)
+    {
+        if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
+
+            if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) return true;
+        }
+
+        return false;
+    }
+
 }
 
