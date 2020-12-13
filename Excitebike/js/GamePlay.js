@@ -7,7 +7,7 @@ class GamePlay extends Phaser.Scene{
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png');
-        this.load.image('backGroundLap2', ruta + 'excitebike_map_1_3.png');
+        this.load.image('backGroundLap3', ruta + 'excitebike_map_1_3.png');
 
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
@@ -72,6 +72,9 @@ class GamePlay extends Phaser.Scene{
                 console.log(playerPos);
                 console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
 
+                if(obstacle.isFinish)
+                {
+                }
 
             }
         });

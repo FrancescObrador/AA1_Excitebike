@@ -35,7 +35,7 @@
   <obstacle type="mud" position="5384" lane ="2"></obstacle>
   <obstacle type="mud" position="5520" lane ="1"></obstacle>
   <obstacle type="mud" position="5520" lane ="3"></obstacle>  
-  <obstacle type="endRamp" position="5656" lane ="-1"></obstacle>  
+  <obstacle type="lapOne" position="5656" lane ="-1"></obstacle>  
 
   <obstacle type="mud" position="6606" lane ="0"></obstacle>
   <obstacle type="mud" position="6606" lane ="2"></obstacle>
@@ -72,7 +72,7 @@
   <obstacle type="mud" position="11014" lane ="2"></obstacle>
   <obstacle type="mud" position="111150" lane ="1"></obstacle>
   <obstacle type="mud" position="111150" lane ="3"></obstacle>  
-  <obstacle type="endRamp" position="11286" lane ="-1"></obstacle>   
+  <obstacle type="lapTwo" position="11286" lane ="-1"></obstacle>   
   
   <obstacle type="mud" position="12236" lane ="0"></obstacle>
   <obstacle type="mud" position="12236" lane ="2"></obstacle>
@@ -109,6 +109,6 @@
   <obstacle type="mud" position="16643" lane ="2"></obstacle>
   <obstacle type="mud" position="16779" lane ="1"></obstacle>
   <obstacle type="mud" position="16779" lane ="3"></obstacle>  
-  <obstacle type="endRamp" position="16916" lane ="-1"></obstacle>  
+  <obstacle type="finish" position="16916" lane ="-1"></obstacle>  
 
 </obstacles>
