@@ -6,6 +6,9 @@ class GamePlay extends Phaser.Scene{
     preload(){
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
+        this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png');
+        this.load.image('backGroundLap2', ruta + 'excitebike_map_1_3.png');
+
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
         this.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
@@ -36,11 +39,17 @@ class GamePlay extends Phaser.Scene{
         }
         this.obstacles = myObstacles;
 
-        this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
+        
+        this.lap1 = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
+        this.lap2 = this.add.image(this.lap1.width, 0, 'backGroundLap2').setOrigin(0).setScale(1);
+        this.lap2 = this.add.image(this.lap1.width + this.lap2.width, 0, 'backGroundLap3').setOrigin(0).setScale(1);
+       
+        this.backGround = this.add.container();
+        this.backGround.add([this.lap1, this.lap2, this.lap3]);
 
         this.pilot = new Player(this,config.width/2,125);
         
-        this.pilotMapPosition = this.backGround.x + this.pilot.sprite.x;
+        this.pilotMapPosition = this.pilot.sprite.x;
 
         this.inputs = new InputManager(this);
     }
@@ -49,11 +58,10 @@ class GamePlay extends Phaser.Scene{
     update(){
 
         this.pilot.customUpdate(this.inputs);
-        this.backGround.x -= this.pilot.speedX; // scroll  
+
+        this.backGround.x -= this.pilot.speedX; // container scroll  
         this.pilotMapPosition += this.pilot.speedX;
          
-       console.log(Math.trunc(this.pilotMapPosition));
-
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
@@ -63,6 +71,7 @@ class GamePlay extends Phaser.Scene{
                 }
             }
         });
+        
     }
     
     isInside(positionX, _obstacle)
