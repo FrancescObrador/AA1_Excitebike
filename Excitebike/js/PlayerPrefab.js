@@ -2,33 +2,35 @@
 class Player {
     static animsCreated = false;
 
-    constructor(scene, positionX, positionY){
+    constructor(scene, newLine){
 
         this.currScene = scene;
-        this.acceleration = 0.01;
+        this.accelerationRate = 0.01;
         this.speedX = 0;
         this.speedY = 30;
-        this.maxSpeedX = 1.5;
-        this.currentLine = 0;
+        this.maxSpeedX = 2.5;
+        this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
-
-        this.lines = [125, 138, 150, 162];
-
-        this.sprite = this.currScene.physics.add.sprite(positionX, positionY,'pilotStanding');
+        this.lines = [162,150,138,125];
+        this.linesX = [70,86 ,102,117];
+        this.OriginalXPos = this.linesX[this.currentLine];
+        this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
         if(!this.animsCreated)this.createAnims();
-        this.sprite.anims.play('moving',false);
-
-
-        
+        this.sprite.anims.play('moving',false);       
     } 
 
     customUpdate(inputs){
-        if (inputs.A_Key.isDown && this.speedX < this.maxSpeedX ){    
-            this.speedX += this.acceleration;
+        if (inputs.A_Key.isDown){    
+            this.speedX += this.accelerationRate;
         } 
         else if(this.speedX > 0) {
-            this.speedX -= this.acceleration;
+            this.speedX -= this.accelerationRate;
+        }
+        if(this.speedX < 0){
+            this.speedX = 0;
+        }else if(this.speedX > this.maxSpeedX){
+            this.speedX = this.maxSpeedX;
         }
         if(this.speedX <= 0){
             this.speedX = 0;
@@ -36,18 +38,17 @@ class Player {
         }
         if(!this.isOnAir){
             if(!this.isTurning) {
-                if(inputs.Up_Key.isDown && this.currentLine > 0){
-                    this.currentLine--;
-                    this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
+                if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){
+                    this.currentLine++;
+                    this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
                     this.isTurning = true;
                     
                     this.turningRight = false;
                 } 
-                else if(inputs.Down_Key.isDown && this.currentLine < this.lines.length-1){
-                    this.currentLine++;
-                    this.currScene.physics.moveTo(this.sprite, config.width/2, this.lines[this.currentLine], this.speedY);
+                else if(inputs.Down_Key.isDown && this.currentLine > 0 ){
+                    this.currentLine--;
+                    this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
                     this.isTurning = true;
-                    
                     this.turningRight = true;
                 }
             }

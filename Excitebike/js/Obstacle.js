@@ -1,6 +1,5 @@
 class Obstacle {
     constructor(scene, subType, positionX, lane){ // subtype defines the this.width and the hegiht
-        
         this.type = "ramp"; // Default value
         this.x = positionX;
         this.y = 0;
@@ -13,7 +12,6 @@ class Obstacle {
 
         var laneSize = 12;
         var allLanesSize = 48;
-
 
         switch(subType){
             case "mud":
@@ -38,7 +36,7 @@ class Obstacle {
             case "smallRamp":
                 this.width = 40;
                 this.height = allLanesSize;
-            break;
+                break;
             case "bigRamp":
                 this.width = 72;
                 this.height = allLanesSize;
@@ -47,7 +45,7 @@ class Obstacle {
                 this.width = 44;
                 this.height = allLanesSize;
                 break;
-            case "BigRightRamp":
+            case "bigRightRamp":
                 this.width = 44;
                 this.height = allLanesSize;
                 break;
@@ -59,7 +57,7 @@ class Obstacle {
                 this.width = 24;
                 this.height = allLanesSize;
                 break;
-            case "grassPatchStart":
+            case "grassPatchStart": 
                 this.width = 80;
                 this.height = allLanesSize;
                 this.type  = "tramp";
@@ -71,11 +69,11 @@ class Obstacle {
             default:
                 break;
         }
-        
         this.end = this.x + this.width;
 
-        switch(lane){
+        switch(this.currentLane){
             case -1:
+                break;
             case 0:
                 this.y = 162;
             break; 
@@ -86,12 +84,13 @@ class Obstacle {
                 this.y = 138;  
             break;            
             case 3: 
-                this.y = 125;   
+            this.y = 125;   
             break;
             default:
+                console.log("Error al crear obstáculo, linea no deseada"); // No entiendo esto
                 break;
         }
-       
+
         scene.add.existing(this);
     }  
 }

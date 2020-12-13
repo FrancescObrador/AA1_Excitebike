@@ -29,20 +29,21 @@ class GamePlay extends Phaser.Scene{
         {
             var item = obstacles[i];
             var type = item.getAttribute('type');
-            var position = item.getAttribute('position');
-            var lane = item.getAttribute('lane');
+            var position = parseInt(item.getAttribute('position'), 10);
+            var lane = parseInt(item.getAttribute('lane'), 10);
             
-            myObstacles[i] = new Obstacle(this, type, position, lane);
+            myObstacles[i] = new Obstacle(this, type, position, lane); // Aquí hay un bug extraño, no pilla los obstáculos
         }
         this.obstacles = myObstacles;
 
         this.backGround = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
 
-        this.pilot = new Player(this,config.width/2,125);
+        this.pilot = new Player(this,1 );
         
         this.pilotMapPosition = this.backGround.x + this.pilot.sprite.x;
 
         this.inputs = new InputManager(this);
+
     }
 
 
@@ -52,15 +53,14 @@ class GamePlay extends Phaser.Scene{
         this.backGround.x -= this.pilot.speedX; // scroll  
         this.pilotMapPosition += this.pilot.speedX;
          
-       console.log(Math.trunc(this.pilotMapPosition));
-
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
-                if(obstacle.type == "tramp")
-                {
-                    console.log("a tramp!");
-                }
+
+                console.log(playerPos);
+                console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
+
+
             }
         });
     }
@@ -69,7 +69,8 @@ class GamePlay extends Phaser.Scene{
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
 
-            if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) return true;
+            if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
+            return true;
         }
 
         return false;
