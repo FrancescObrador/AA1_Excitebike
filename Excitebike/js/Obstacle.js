@@ -8,6 +8,10 @@ class Obstacle {
         this.height = 0;
         this.currentLane = lane;
 
+        this.isLap1 = false;
+        this.isLap2 = false;
+        this.isFinish = false;
+
         this.isAllLane = true;
 
         var laneSize = 12;
@@ -62,9 +66,20 @@ class Obstacle {
                 this.height = allLanesSize;
                 this.type  = "tramp";
                 break;
-            case "endRamp":
+            case "lapOne":
                 this.width = 96;
                 this.height = allLanesSize;
+                this.isLap1 = true;
+                break; 
+            case "lapTwo":
+                this.width = 96;
+                this.height = allLanesSize;
+                this.isLap2 = true;
+                break; 
+            case "finish":
+                this.width = 96;
+                this.height = allLanesSize;
+                this.isFinish = true;
                 break;
             default:
                 break;

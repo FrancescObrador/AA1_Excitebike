@@ -8,7 +8,7 @@ class Player {
         this.accelerationRate = 0.01;
         this.speedX = 0;
         this.speedY = 30;
-        this.maxSpeedX = 2.5;
+        this.maxSpeedX = 2;
         this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
