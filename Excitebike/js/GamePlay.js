@@ -66,8 +66,8 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
 
-        if(this.pilotMapPosition >= this.lap1) // TODO Launch once a text with the current time
-        if(this.pilotMapPosition >= this.lap2) // TODO Launch once a text with the current time
+        if(this.pilotMapPosition >= this.lap1){} // TODO Launch once a text with the current time
+        if(this.pilotMapPosition >= this.lap2){} // TODO Launch once a text with the current time
 
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
