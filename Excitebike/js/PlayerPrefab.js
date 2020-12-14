@@ -20,6 +20,20 @@ class Player {
         this.sprite.anims.play('moving',false);       
     } 
 
+    static loadAssets(scene){
+        var ruta = 'assets/img/pilot/';
+        scene.load.image('motorbike',ruta + 'motorbike.png');
+        scene.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
+        scene.load.spritesheet('pilotFrontTilt', ruta + 'pilot_front_tilt.png', {frameWidth: 92/4, frameHeight: 25}); //sa de fer depenent de input, no amb animacio
+        scene.load.spritesheet('pilotWheelies', ruta + 'pilot_wheelies.png', {frameWidth: 138/6, frameHeight: 26});//sa de fer depenent de input, no amb animacio
+        scene.load.spritesheet('pilotGetUp', ruta + 'pilot_get_up.png', {frameWidth: 77/3, frameHeight: 21});
+        scene.load.spritesheet('pilotMoving', ruta + 'pilot_moving.png',{frameWidth: 40/2, frameHeight: 21});
+        scene.load.spritesheet('pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
+        scene.load.image('pilotTurnLeft',ruta + 'pilot_turning_left.png');
+        scene.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
+        scene.load.image('pilotStanding',ruta + 'pilot_standing.png');
+    }
+
     customUpdate(inputs){
         if (inputs.A_Key.isDown){    
             this.speedX += this.accelerationRate;
