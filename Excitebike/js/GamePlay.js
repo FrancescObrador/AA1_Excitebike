@@ -48,9 +48,9 @@ class GamePlay extends Phaser.Scene{
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
 
-                console.log(playerPos);
-                console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
-
+                //console.log(playerPos);
+                //console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
+                obstacle.actOnPlayer(this.pilot,playerPos);
 
             }
         });

@@ -6,12 +6,14 @@ class Player {
 
         this.currScene = scene;
         this.accelerationRate = 0.01;
+        this.gravity = 50;
         this.speedX = 0;
         this.speedY = 30;
         this.maxSpeedX = 2.5;
         this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
+        this.isFalling = false;
         this.lines = [162,150,138,125];
         this.linesX = [70,86 ,102,117];
         this.OriginalXPos = this.linesX[this.currentLine];
@@ -35,11 +37,15 @@ class Player {
     }
 
     customUpdate(inputs){
+        console.clear();
+        console.log(this.currentLine);
+        console.log(this.sprite.y);
         if (inputs.A_Key.isDown){    
             this.speedX += this.accelerationRate;
         } 
         else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
+            //this.speedX -= this.accelerationRate;
+            this.speedX = 0;
         }
         if(this.speedX < 0){
             this.speedX = 0;
@@ -80,6 +86,7 @@ class Player {
                 else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
                     this.sprite.body.stop();
                     this.isTurning = false;
+                    
                 }
                 //aqui podrem fer una iteracio quan acabi el gir
                 if(!this.isTurning){
@@ -88,10 +95,30 @@ class Player {
                 
             }
         }
-        else{
-            
+        else if(this.isFalling){
+            this.sprite.body.velocity.y += this.gravity;
+            if(this.sprite.y >= this.lines[this.currentLine]){
+                this.sprite.body.stop();
+                this.sprite.y = this.lines[this.currentLine];
+                this.isFalling = false;
+                this.isOnAir = false;
+            }
         }
     }
+
+    rampActivate(){
+        this.isOnAir = true;
+
+        this.sprite.body.velocity.y = -this.speedX * 100;
+        console.clear();
+        console.log("Ramp - Activate");
+    }
+    rampDeactivate(){
+        this.isFalling = true;
+        console.clear();
+        console.log("Ramp - Deactivate");
+    }
+
     createAnims(){
         this.animsCreated = true;
         this.currScene.anims.create({

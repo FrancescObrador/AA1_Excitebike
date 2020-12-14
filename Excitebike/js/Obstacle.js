@@ -3,6 +3,7 @@ class Obstacle {
         this.type = "ramp"; // Default value
         this.x = positionX;
         this.y = 0;
+        this.halfPoint = 0;
         this.end = 0;
         this.width = 0;
         this.height = 0;
@@ -40,6 +41,7 @@ class Obstacle {
             case "bigRamp":
                 this.width = 72;
                 this.height = allLanesSize;
+                this.halfPoint = this.width/2;
                 break;
             case "bigLeftRamp":
                 this.width = 44;
@@ -70,6 +72,7 @@ class Obstacle {
                 break;
         }
         this.end = this.x + this.width;
+        this.halfPoint += this.x;
 
         switch(this.currentLane){
             case -1:
@@ -93,4 +96,24 @@ class Obstacle {
 
         scene.add.existing(this);
     }  
+
+    actOnPlayer(player,x_player){
+        switch(this.type){
+            case "tramp":
+                break;
+            case "booster":
+                break;
+            case "ramp":
+                if(x_player >= this.x && x_player <= this.halfPoint) {
+                    player.rampActivate();
+                }
+                else{
+                    player.rampDeactivate();
+                }
+                
+                break;
+            default:
+                break;
+        }
+    }
 }
