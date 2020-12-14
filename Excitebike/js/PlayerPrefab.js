@@ -38,14 +38,15 @@ class Player {
 
     customUpdate(inputs){
         console.clear();
-        console.log(this.currentLine);
         console.log(this.sprite.y);
+        console.log(this.sprite.body.y);
+        console.log(this.currentLine);
         if (inputs.A_Key.isDown){    
             this.speedX += this.accelerationRate;
         } 
         else if(this.speedX > 0) {
-            //this.speedX -= this.accelerationRate;
-            this.speedX = 0;
+            this.speedX -= this.accelerationRate;
+            //this.speedX = 0;
         }
         if(this.speedX < 0){
             this.speedX = 0;
@@ -56,7 +57,20 @@ class Player {
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
-        if(!this.isOnAir){
+
+        if(this.isFalling){
+            
+            if(this.sprite.y >= this.lines[this.currentLine]){
+                this.sprite.body.velocity.y = 0;
+                this.sprite.y = this.lines[this.currentLine];
+                this.isFalling = false;
+                this.isOnAir = false;
+            }
+            else{
+                this.sprite.body.velocity.y += this.gravity;
+            }
+        }
+        else if(!this.isOnAir){
             if(!this.isTurning) {
                 if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){
                     this.currentLine++;
@@ -82,10 +96,12 @@ class Player {
                 if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){
                     this.sprite.body.stop();
                     this.isTurning = false;
+                    //this.sprite.y = this.lines[this.currentLine];
                 }
                 else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
                     this.sprite.body.stop();
                     this.isTurning = false;
+                    //this.sprite.y = this.lines[this.currentLine];
                     
                 }
                 //aqui podrem fer una iteracio quan acabi el gir
@@ -95,28 +111,20 @@ class Player {
                 
             }
         }
-        else if(this.isFalling){
-            this.sprite.body.velocity.y += this.gravity;
-            if(this.sprite.y >= this.lines[this.currentLine]){
-                this.sprite.body.stop();
-                this.sprite.y = this.lines[this.currentLine];
-                this.isFalling = false;
-                this.isOnAir = false;
-            }
-        }
+        
     }
 
     rampActivate(){
         this.isOnAir = true;
 
         this.sprite.body.velocity.y = -this.speedX * 100;
-        console.clear();
-        console.log("Ramp - Activate");
+        // console.clear();
+        // console.log("Ramp - Activate");
     }
     rampDeactivate(){
         this.isFalling = true;
-        console.clear();
-        console.log("Ramp - Deactivate");
+        // console.clear();
+        // console.log("Ramp - Deactivate");
     }
 
     createAnims(){
