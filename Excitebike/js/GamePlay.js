@@ -39,17 +39,20 @@ class GamePlay extends Phaser.Scene{
             var lane = parseInt(item.getAttribute('lane'), 10);
             
             myObstacles[i] = new Obstacle(this, type, position, lane); 
+
+            // Laps ramps set
+            if(myObstacles[i].isLap1) this.lap1 = myObstacles[i];
+            if(myObstacles[i].isLap2) this.lap2 = myObstacles[i];
             if(myObstacles[i].isFinish) this.goal = myObstacles[i];
         }
         this.obstacles = myObstacles;
 
-        this.isMoving = true;
-        this.lap1 = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
-        this.lap2 = this.add.image(this.lap1.width, 0, 'backGroundLap2').setOrigin(0).setScale(1);
-        this.lap3 = this.add.image(this.lap1.width + this.lap2.width, 0, 'backGroundLap3').setOrigin(0).setScale(1);
+        this.lapMap1 = this.add.image(0, 0, 'backGround').setOrigin(0).setScale(1);
+        this.lapMap2 = this.add.image(this.lapMap1.width, 0, 'backGroundLap2').setOrigin(0).setScale(1);
+        this.lapMap3 = this.add.image(this.lapMap1.width + this.lapMap2.width, 0, 'backGroundLap3').setOrigin(0).setScale(1);
        
         this.backGround = this.add.container();
-        this.backGround.add([this.lap1, this.lap2, this.lap3]);
+        this.backGround.add([this.lapMap1, this.lapMap2, this.lapMap3]);
 
         this.pilot = new Player(this, 1);
         
@@ -63,15 +66,15 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
 
+        if(this.pilotMapPosition >= this.lap1) // TODO Launch once a text with the current time
+        if(this.pilotMapPosition >= this.lap2) // TODO Launch once a text with the current time
+
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
-            this.isMoving = false;
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
-        }
-
-        if(this.isMoving){
-            this.backGround.x -= this.pilot.speedX; // container scroll  
-            this.pilotMapPosition += this.pilot.speedX;
+        } else {
+            this.backGround.x -= this.pilot.speedX;     // container scroll  
+            this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
         }
          
         this.obstacles.forEach(obstacle => {
@@ -81,7 +84,6 @@ class GamePlay extends Phaser.Scene{
                 console.log(playerPos);
                 console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
 
-               
             }
         });
     }

@@ -8,6 +8,8 @@ class Obstacle {
         this.height = 0;
         this.currentLane = lane;
 
+        this.isLap1 = false;
+        this.isLap2 = false;
         this.isFinish = false;
 
         this.isAllLane = true;
@@ -67,10 +69,12 @@ class Obstacle {
             case "lapOne":
                 this.width = 96;
                 this.height = allLanesSize;
+                this.isLap1 = true;
                 break; 
             case "lapTwo":
                 this.width = 96;
                 this.height = allLanesSize;
+                this.isLap2 = true;
                 break; 
             case "finish":
                 this.width = 96;
