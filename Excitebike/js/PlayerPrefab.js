@@ -72,6 +72,7 @@ class Player {
         }
         else if(!this.isOnAir){
             if(!this.isTurning) {
+                
                 if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){
                     this.currentLine++;
                     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
@@ -85,6 +86,7 @@ class Player {
                     this.isTurning = true;
                     this.turningRight = true;
                 }
+                
             }
             else {
                 if(this.turningRight){
@@ -110,8 +112,12 @@ class Player {
                 }
                 
             }
+
         }
-        
+        //FIX THIS SHIT
+        if(!this.isOnAir && !this.isTurning){
+            this.sprite.y = this.lines[this.currentLine];
+        }
     }
 
     rampActivate(){
