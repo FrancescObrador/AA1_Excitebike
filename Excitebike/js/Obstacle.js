@@ -32,11 +32,14 @@ class Obstacle {
                 this.width = 16;
                 this.isAllLane = false;
                 this.height = laneSize *2;
+                this.halfPoint = 19;
+
                 break;
 
             case "smallRamp":
                 this.width = 40;
                 this.height = allLanesSize;
+                this.halfPoint = 19;
                 break;
             case "bigRamp":
                 this.width = 72;
@@ -46,10 +49,13 @@ class Obstacle {
             case "bigLeftRamp":
                 this.width = 44;
                 this.height = allLanesSize;
+                this.halfPoint = 26;
                 break;
             case "bigRightRamp":
                 this.width = 44;
                 this.height = allLanesSize;
+                this.halfPoint = 15;
+
                 break;
             case "longRamp":
                 this.width = 72;
@@ -58,6 +64,7 @@ class Obstacle {
             case "smallBump":
                 this.width = 24;
                 this.height = allLanesSize;
+                this.halfPoint = 12;
                 break;
             case "grassPatchStart": 
                 this.width = 80;
