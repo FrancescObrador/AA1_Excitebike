@@ -27,6 +27,13 @@ class GamePlay extends Phaser.Scene{
     }
     
     create(){
+
+        this.startTime = 5.0;
+        this.lapOneTime = 0;
+        this.lapTwoTime = 0;
+        this.finalTime = 0;
+
+        // OBSTACLES XML
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
         var myObstacles = new Array(obstacles.length);
@@ -54,6 +61,7 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.container();
         this.backGround.add([this.lapMap1, this.lapMap2, this.lapMap3]);
 
+        // PLAYER
         this.pilot = new Player(this, 1);
         
         this.pilotMapPosition = this.pilot.sprite.x;
@@ -66,9 +74,6 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
 
-        if(this.pilotMapPosition >= this.lap1){} // TODO Launch once a text with the current time
-        if(this.pilotMapPosition >= this.lap2){} // TODO Launch once a text with the current time
-
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
@@ -80,24 +85,32 @@ class GamePlay extends Phaser.Scene{
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
-
                 console.log(playerPos);
                 console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
-
             }
         });
+       
+        //TIMER - sets the 3 variables in seconds - float
+        this.timer = (this.game.getTime()/1000)- this.startTime;
+        
+        if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
+            this.lapOneTime = this.timer;
+        }
+        if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
+            this.lapTwoTime = this.timer;
+        }  
+        if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
+            this.finalTime = this.timer;
+        } 
     }
     
     isInside(positionX, _obstacle)
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
-
             if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
             return true;
         }
-
         return false;
     }
-
 }
 
