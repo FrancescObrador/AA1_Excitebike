@@ -23,6 +23,8 @@ class GamePlay extends Phaser.Scene{
         
         this.load.xml('obsts', 'assets/map1Info.xml');
 
+        this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
+
         console.log("resources loaded");
     }
     
@@ -68,6 +70,10 @@ class GamePlay extends Phaser.Scene{
 
         this.inputs = new InputManager(this);
 
+        // TEXT
+        this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
+        //TODO Center text
+
     }
 
     update(){
@@ -95,12 +101,18 @@ class GamePlay extends Phaser.Scene{
         
         if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
             this.lapOneTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
         }
         if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
             this.lapTwoTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
         }  
         if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
             this.finalTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
     }
     
@@ -111,6 +123,19 @@ class GamePlay extends Phaser.Scene{
             return true;
         }
         return false;
+    }
+
+    eraseText()
+    {
+      this.texto.text = "";
+    }
+
+    convertToTime(time)
+    {
+        var minutes = Math.floor(time / 60);
+        var seconds = time - minutes * 60;
+        
+        return minutes + ":" + seconds.toFixed(0);
     }
 }
 
