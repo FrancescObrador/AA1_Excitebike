@@ -8,6 +8,7 @@ class GamePlay extends Phaser.Scene{
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png');
         this.load.image('backGroundLap3', ruta + 'excitebike_map_1_3.png');
+        this.load.image('hud', ruta + 'HUD.png');
 
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
@@ -70,9 +71,14 @@ class GamePlay extends Phaser.Scene{
 
         this.inputs = new InputManager(this);
 
+        // HUD
+        this.hud = this.add.image(0, config.height, 'hud').setOrigin(0, 1);
+
         // TEXT
         this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
-        //TODO Center text
+        this.texto.setCenterAlign();
+
+        this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
 
     }
 
@@ -98,6 +104,7 @@ class GamePlay extends Phaser.Scene{
        
         //TIMER - sets the 3 variables in seconds - float
         this.timer = (this.game.getTime()/1000)- this.startTime;
+        this.hudTimer.text = this.convertToTime(this.timer);
         
         if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
             this.lapOneTime = this.timer;
@@ -132,10 +139,11 @@ class GamePlay extends Phaser.Scene{
 
     convertToTime(time)
     {
-        var minutes = Math.floor(time / 60);
-        var seconds = time - minutes * 60;
+        var secs = Math.floor(time);
+        var milli = ((time - secs) * 100);
+        var minutes = ((secs / 60) % 60);
         
-        return minutes + ":" + seconds.toFixed(0);
+        return minutes.toFixed(0) + ":" + secs.toFixed(0) + ":" + milli.toFixed(0)
     }
 }
 
