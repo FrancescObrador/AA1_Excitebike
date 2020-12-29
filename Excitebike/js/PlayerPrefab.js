@@ -24,6 +24,7 @@ class Player {
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
+        this.wheeliesCounter = -1;
     } 
 
     static loadAssets(scene){
@@ -136,20 +137,50 @@ class Player {
         else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
             if(!this.isTurning) { //sino estem cambiant de carril
                 
-                if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
-                    this.currentLine++;
-                    this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                    this.isTurning = true;
-                    
-                    this.turningRight = false;
-                } 
-                else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
-                    this.currentLine--;
-                    this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                    this.isTurning = true;
-                    this.turningRight = true;
+                if(this.wheeliesCounter < 0){ //sino esta fent wheelies
+                    if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
+                        this.currentLine++;
+                        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
+                        this.isTurning = true;
+                        
+                        this.turningRight = false;
+                    } 
+                    else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
+                        this.currentLine--;
+                        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
+                        this.isTurning = true;
+                        this.turningRight = true;
+                    }
                 }
-                
+                //WHEELIES
+                if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
+                    this.tiltCounter = 0;
+                }
+                else if(inputs.Left_Key.isDown){
+                    this.tiltCounter++;
+                    if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                        this.tiltCounter = 0;
+
+                        this.wheeliesCounter++;
+                        if(this.wheeliesCounter > 5){
+                            this.wheeliesCounter = 5;
+                        }
+                    }
+                }
+                else if(inputs.Right_Key.isDown){
+                    this.tiltCounter++; 
+                    if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                        this.tiltCounter = 0;
+
+                        this.wheeliesCounter--;
+                        if(this.wheeliesCounter < -1){
+                            this.wheeliesCounter = -1;
+                        }
+                    }
+                }
+                if(this.wheeliesCounter >= 0){
+                    this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
+                }
             }
             else {
                 if(this.turningRight){ //si esta girant dreta
