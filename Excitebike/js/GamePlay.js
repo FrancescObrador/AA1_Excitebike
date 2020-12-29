@@ -8,6 +8,7 @@ class GamePlay extends Phaser.Scene{
         this.load.image('backGround', ruta + 'excitebike_map_1.png');
         this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png');
         this.load.image('backGroundLap3', ruta + 'excitebike_map_1_3.png');
+        this.load.image('hud', ruta + 'HUD.png');
 
         ruta += 'pilot/';
         this.load.image('motorbike',ruta + 'motorbike.png');
@@ -23,10 +24,19 @@ class GamePlay extends Phaser.Scene{
         
         this.load.xml('obsts', 'assets/map1Info.xml');
 
+        this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
+
         console.log("resources loaded");
     }
     
     create(){
+
+        this.startTime = 5.0;
+        this.lapOneTime = 0;
+        this.lapTwoTime = 0;
+        this.finalTime = 0;
+
+        // OBSTACLES XML
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
         var myObstacles = new Array(obstacles.length);
@@ -54,20 +64,27 @@ class GamePlay extends Phaser.Scene{
         this.backGround = this.add.container();
         this.backGround.add([this.lapMap1, this.lapMap2, this.lapMap3]);
 
+        // PLAYER
         this.pilot = new Player(this, 1);
         
         this.pilotMapPosition = this.pilot.sprite.x;
 
         this.inputs = new InputManager(this);
 
+        // HUD
+        this.hud = this.add.image(0, config.height, 'hud').setOrigin(0, 1);
+
+        // TEXT
+        this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
+        this.texto.setCenterAlign();
+
+        this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
+
     }
 
     update(){
 
         this.pilot.customUpdate(this.inputs);
-
-        if(this.pilotMapPosition >= this.lap1){} // TODO Launch once a text with the current time
-        if(this.pilotMapPosition >= this.lap2){} // TODO Launch once a text with the current time
 
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
@@ -80,24 +97,53 @@ class GamePlay extends Phaser.Scene{
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
-
                 console.log(playerPos);
                 console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
-
             }
         });
+       
+        //TIMER - sets the 3 variables in seconds - float
+        this.timer = (this.game.getTime()/1000)- this.startTime;
+        this.hudTimer.text = this.convertToTime(this.timer);
+        
+        if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
+            this.lapOneTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+        }
+        if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
+            this.lapTwoTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+        }  
+        if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
+            this.finalTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
+            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+        } 
     }
     
     isInside(positionX, _obstacle)
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
-
             if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
             return true;
         }
-
         return false;
     }
 
+    eraseText()
+    {
+      this.texto.text = "";
+    }
+
+    convertToTime(time)
+    {
+        var secs = Math.floor(time);
+        var milli = ((time - secs) * 100);
+        var minutes = ((secs / 60) % 60);
+        
+        return minutes.toFixed(0) + ":" + secs.toFixed(0) + ":" + milli.toFixed(0)
+    }
 }
 
