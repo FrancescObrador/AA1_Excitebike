@@ -31,11 +31,6 @@ class GamePlay extends Phaser.Scene{
     
     create(){
 
-        this.startTime = 5.0;
-        this.lapOneTime = 0;
-        this.lapTwoTime = 0;
-        this.finalTime = 0;
-
         // OBSTACLES XML
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
@@ -78,6 +73,8 @@ class GamePlay extends Phaser.Scene{
         this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
         this.texto.setCenterAlign();
 
+        this.startTime = 5.0;
+
         this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
 
     }
@@ -89,11 +86,13 @@ class GamePlay extends Phaser.Scene{
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
+            //TODO 
+
         } else {
             this.backGround.x -= this.pilot.speedX;     // container scroll  
             this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
         }
-         
+        
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
@@ -139,11 +138,21 @@ class GamePlay extends Phaser.Scene{
 
     convertToTime(time)
     {
-        var secs = Math.floor(time);
-        var milli = ((time - secs) * 100);
-        var minutes = ((secs / 60) % 60);
-        
-        return minutes.toFixed(0) + ":" + secs.toFixed(0) + ":" + milli.toFixed(0)
+		 //Convert seconds into minutes and seconds
+		 var minutes = Math.floor(time / 60);
+		 var seconds = Math.floor(time) - (60 * minutes);
+		 var millis = ((time - Math.floor(time)) * 100).toFixed(0);
+ 
+		 //Display minutes, add a 0 to the start if less than 10
+		 var result = (minutes < 10) ? "0" + minutes : minutes; 
+ 
+		 //Display seconds, add a 0 to the start if less than 10
+		 result += (seconds < 10) ? ":0" + seconds : ":" + seconds; 
+
+		 //Display millis, add a 0 to the start if less than 10
+		 result += (millis < 10)? ":0" + millis : ":" + millis;
+
+		 return result
     }
 }
 
