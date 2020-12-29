@@ -41,46 +41,46 @@ class Player {
         console.log(this.sprite.y);
         console.log(this.sprite.body.y);
         console.log(this.currentLine);
-        if (inputs.A_Key.isDown){    
+
+        //X velocity
+        if (inputs.A_Key.isDown){  //si apretem space incrementem velocitat
             this.speedX += this.accelerationRate;
         } 
-        else if(this.speedX > 0) {
+        else if(this.speedX > 0) { //sino " i la velocitat major que 0 decrementem velocitat
             this.speedX -= this.accelerationRate;
-            //this.speedX = 0;
         }
-        if(this.speedX < 0){
-            this.speedX = 0;
-        }else if(this.speedX > this.maxSpeedX){
-            this.speedX = this.maxSpeedX;
-        }
-        if(this.speedX <= 0){
+        if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
+        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+            this.speedX = this.maxSpeedX;
+        }
 
-        if(this.isFalling){
+        //Y velocity
+        if(this.isFalling){ //jugador esta caient
             
-            if(this.sprite.y >= this.lines[this.currentLine]){
+            if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
                 this.sprite.body.velocity.y = 0;
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
                 this.isOnAir = false;
             }
             else{
-                this.sprite.body.velocity.y += this.gravity;
+                this.sprite.body.velocity.y += this.gravity; //sino simulem gravetat
             }
         }
-        else if(!this.isOnAir){
-            if(!this.isTurning) {
+        else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
+            if(!this.isTurning) { //sino estem cambiant de carril
                 
-                if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){
+                if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
                     this.currentLine++;
                     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
                     this.isTurning = true;
                     
                     this.turningRight = false;
                 } 
-                else if(inputs.Down_Key.isDown && this.currentLine > 0 ){
+                else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
                     this.currentLine--;
                     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
                     this.isTurning = true;
@@ -89,21 +89,21 @@ class Player {
                 
             }
             else {
-                if(this.turningRight){
+                if(this.turningRight){ //si esta girant dreta
                     this.sprite.setTexture('pilotTurnRight');
                 }
-                else{
+                else{ //si esta girant esquerra
                     this.sprite.setTexture('pilotTurnLeft');
                 }
-                if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){
+                if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){ //si arriba al carril de destí - Dreta
                     this.sprite.body.stop();
                     this.isTurning = false;
-                    //this.sprite.y = this.lines[this.currentLine];
+
                 }
-                else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){
+                else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){ //si arriba al carril de destí - Esquerra
                     this.sprite.body.stop();
                     this.isTurning = false;
-                    //this.sprite.y = this.lines[this.currentLine];
+
                     
                 }
                 //aqui podrem fer una iteracio quan acabi el gir
@@ -114,7 +114,7 @@ class Player {
             }
 
         }
-        //FIX THIS SHIT
+        //FIX THIS SHIT - o potser no eh
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
         }
