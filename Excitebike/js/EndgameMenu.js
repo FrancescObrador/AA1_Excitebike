@@ -76,7 +76,7 @@ class EndgameMenu extends Phaser.Scene{
 
 	loadStartMenu()
 	{
-		//this.scene.start("StartMenu");
+		this.scene.start("StartMenu");
 	}
 
 	loadPodium(podiumPos) {
