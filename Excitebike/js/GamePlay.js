@@ -86,8 +86,7 @@ class GamePlay extends Phaser.Scene{
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
-            //TODO 
-
+            this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
         } else {
             this.backGround.x -= this.pilot.speedX;     // container scroll  
             this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
@@ -108,17 +107,17 @@ class GamePlay extends Phaser.Scene{
         if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
             this.lapOneTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         }
         if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
             this.lapTwoTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         }  
         if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
             this.finalTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
     }
     
@@ -153,6 +152,12 @@ class GamePlay extends Phaser.Scene{
 		 result += (millis < 10)? ":0" + millis : ":" + millis;
 
 		 return result
+    }
+
+    loadRanking()
+    {
+        this.scene.start("EndgameMenu", {time: this.timer});
+        this.scene.stop("GamePlay");
     }
 }
 

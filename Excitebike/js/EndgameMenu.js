@@ -13,28 +13,18 @@ class EndgameMenu extends Phaser.Scene{
 		var ruta = "assets/img/Ranking/";
 		this.load.image('screen', ruta + "RankingScreen.png");
 
-		this.textColor = "0x5ce430";
+		this.textColor = "0x5ce430";	// Bright green
 
 		this.bestTimes = ["1:16:00", "1:26:00", "1:36:00"];	//Excitebike times
-		this.bestTimesInFloat = [76, 86, 96];				// Times equivalent
+		this.bestTimesInFloat = [76, 86, 96, 106, 116, 126, 136, 146, 156, 166, 176, 186]; 	// Times equivalent
 
-		this.position = "#0";
+		this.position = "#";
 
-		if(this.yourTime <= this.bestTimesInFloat[0])
-		{
-			this.position = "#1";
-		}
-		else if (this.yourTime > this.bestTimesInFloat[0] && this.yourTime <= this.bestTimesInFloat[1])
-		{
-			this.position = "#2";
-		}
-		else if (this.yourTime > this.bestTimesInFloat[1] && this.yourTime <= this.bestTimesInFloat[2])
-		{
-			this.position = "#3"
-		}
-		else 
-		{
-			// You loose
+		for(var i = 0; i < this.bestTimesInFloat.length; i++){
+			if(this.yourTime <= this.bestTimesInFloat[i]){
+				this.position += (i+1).toString();
+				break;
+			}
 		}
 
 		this.yourTime = this.convertToTime(this.yourTime);
@@ -52,12 +42,8 @@ class EndgameMenu extends Phaser.Scene{
 
 		// Setup menu
 		this.menu = this.add.image(0, 0, 'screen').setScale(1).setOrigin(0);
-		if(this.position == "#1"){
-			this.bestTimeText = this.add.bitmapText(config.width/1.45, config.height/1.95, 'nesFont', this.yourTime, 8).setOrigin(0.5); 
-		}
-		else{
-			this.bestTimeText = this.add.bitmapText(config.width/1.45, config.height/1.95, 'nesFont', this.bestTimes[0], 8).setOrigin(0.5); 
-		}
+		
+		this.bestTimeText = this.add.bitmapText(config.width/1.45, config.height/1.95, 'nesFont', this.bestTimes[0], 8).setOrigin(0.5); 
 		this.bestTimeText.tint = this.textColor;
 		
 		this.yourTimeText = this.add.bitmapText(config.width/1.45, config.height/1.7, 'nesFont', this.yourTime, 8).setOrigin(0.5); 
