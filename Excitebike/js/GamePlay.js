@@ -67,7 +67,7 @@ class GamePlay extends Phaser.Scene{
         this.inputs = new InputManager(this);
 
         // HUD
-        this.hud = this.add.image(0, config.height, 'hud').setOrigin(0, 1);
+        this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
 
         // TEXT
         this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
@@ -78,7 +78,7 @@ class GamePlay extends Phaser.Scene{
         this.lapTwoTime = 0;
         this.finalTime = 0;
 
-        this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
+        this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
     }
 
