@@ -31,11 +31,6 @@ class GamePlay extends Phaser.Scene{
     
     create(){
 
-        this.startTime = 5.0;
-        this.lapOneTime = 0;
-        this.lapTwoTime = 0;
-        this.finalTime = 0;
-
         // OBSTACLES XML
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
@@ -72,13 +67,18 @@ class GamePlay extends Phaser.Scene{
         this.inputs = new InputManager(this);
 
         // HUD
-        this.hud = this.add.image(0, config.height, 'hud').setOrigin(0, 1);
+        this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
 
         // TEXT
         this.texto = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "", 10).setOrigin(0.5);
         this.texto.setCenterAlign();
 
-        this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
+        this.startTime = 5.0;
+        this.lapOneTime = 0;
+        this.lapTwoTime = 0;
+        this.finalTime = 0;
+
+        this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
     }
 
@@ -89,11 +89,12 @@ class GamePlay extends Phaser.Scene{
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
+            this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
         } else {
             this.backGround.x -= this.pilot.speedX;     // container scroll  
             this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
         }
-         
+        
         this.obstacles.forEach(obstacle => {
            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
@@ -109,17 +110,17 @@ class GamePlay extends Phaser.Scene{
         if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
             this.lapOneTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         }
         if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
             this.lapTwoTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         }  
         if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
             this.finalTime = this.timer;
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
-            this.timedEvent = this.time.delayedCall(3000, this.eraseText, [], this);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
     }
     
@@ -139,11 +140,27 @@ class GamePlay extends Phaser.Scene{
 
     convertToTime(time)
     {
-        var secs = Math.floor(time);
-        var milli = ((time - secs) * 100);
-        var minutes = ((secs / 60) % 60);
-        
-        return minutes.toFixed(0) + ":" + secs.toFixed(0) + ":" + milli.toFixed(0)
+		 //Convert seconds into minutes and seconds
+		 var minutes = Math.floor(time / 60);
+		 var seconds = Math.floor(time) - (60 * minutes);
+		 var millis = ((time - Math.floor(time)) * 100).toFixed(0);
+ 
+		 //Display minutes, add a 0 to the start if less than 10
+		 var result = (minutes < 10) ? "0" + minutes : minutes; 
+ 
+		 //Display seconds, add a 0 to the start if less than 10
+		 result += (seconds < 10) ? ":0" + seconds : ":" + seconds; 
+
+		 //Display millis, add a 0 to the start if less than 10
+		 result += (millis < 10)? ":0" + millis : ":" + millis;
+
+		 return result
+    }
+
+    loadRanking()
+    {
+        this.scene.start("EndgameMenu", {time: this.finalTime});
+        this.scene.stop("GamePlay");
     }
 }
 

@@ -2,7 +2,7 @@ var config = {
     type: Phaser.AUTO,
     width: 256, 
     height: 240, 
-    scene: [StartMenu,GamePlay], //Array con los niveles   
+    scene: [StartMenu, GamePlay, EndgameMenu],  
 	antialias: false,
 	render:{pixelArt:true},
 	scale: {
@@ -16,8 +16,6 @@ var config = {
 			debug: true
         }
     },
-
-
 };
 
 var juego = new Phaser.Game(config);
