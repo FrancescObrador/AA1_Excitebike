@@ -74,6 +74,9 @@ class GamePlay extends Phaser.Scene{
         this.texto.setCenterAlign();
 
         this.startTime = 5.0;
+        this.lapOneTime = 0;
+        this.lapTwoTime = 0;
+        this.finalTime = 0;
 
         this.hudTimer = this.add.bitmapText(config.width/1.3, config.height - 25, 'nesFont', "", 7).setOrigin(0.5);
 
@@ -156,7 +159,7 @@ class GamePlay extends Phaser.Scene{
 
     loadRanking()
     {
-        this.scene.start("EndgameMenu", {time: this.timer});
+        this.scene.start("EndgameMenu", {time: this.finalTime});
         this.scene.stop("GamePlay");
     }
 }
