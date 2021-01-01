@@ -8,7 +8,9 @@ class Player {
         this.accelerationRate = 0.01;
         this.speedX = 0;
         this.speedY = 30;
-        this.maxSpeedX = 2;
+        this.maxSpeedXNormal = 1.5;
+        this.maxSpeedXBoost = 2.5;
+        this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
@@ -17,13 +19,31 @@ class Player {
         this.OriginalXPos = this.linesX[this.currentLine];
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
         if(!this.animsCreated)this.createAnims();
-        this.sprite.anims.play('moving',false);       
+        this.sprite.anims.play('moving',false);
+        this.baseHeat = 0.25;
+        this.currentHeat = this.baseHeat;       
     } 
 
     customUpdate(inputs){
-        if (inputs.A_Key.isDown){    
+
+        if(this.currentHeat > this.baseHeat) this.currentHeat -= this.accelerationRate * 0.1;
+
+        if (inputs.A_Key.isDown){ 
+            this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
-        } 
+        
+            //TODO no entenc per que no funciona aixo xddd
+            if (parseInt(this.currentHeat) < 0.5) {
+                this.currentHeat += this.accelerationRate * 0.1;
+            }
+            console.clear();
+            console.log(this.currentHeat);
+        }
+        else if(inputs.B_Key.isDown){
+            this.speedX += this.accelerationRate;
+            this.maxSpeedX = this.maxSpeedXBoost;
+            if(this.currentHeat < 1) this.currentHeat += this.accelerationRate;
+        }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
         }
