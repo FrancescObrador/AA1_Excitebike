@@ -104,6 +104,9 @@ class GamePlay extends Phaser.Scene{
             if(this.isInside(playerPos, obstacle) ){
                // console.log(playerPos);
                // console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
+               if(obstacle.type == "booster"){
+                   this.pilot.currentHeat = 0;
+               }
             }
         });
        

@@ -28,6 +28,10 @@ class Player {
 
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.accelerationRate * 0.1;
 
+        if(this.currentHeat == 1){
+            //TODO Implement "Crash"
+        }
+
         if (inputs.A_Key.isDown){ 
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
