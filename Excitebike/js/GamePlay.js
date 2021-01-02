@@ -78,13 +78,17 @@ class GamePlay extends Phaser.Scene{
         this.lapTwoTime = 0;
         this.finalTime = 0;
 
+        // HUD
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
+        this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0x5ce430);
+        this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     }
 
     update(){
 
         this.pilot.customUpdate(this.inputs);
+        this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
 
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
@@ -162,5 +166,29 @@ class GamePlay extends Phaser.Scene{
         this.scene.start("EndgameMenu", {time: this.finalTime});
         this.scene.stop("GamePlay");
     }
+
+    createBar(x, y, w, h, color){
+		//draw the bar
+		let bar = this.add.graphics();
+            
+        //color the bar
+        bar.fillStyle(color, 1);
+            
+        //fill the bar with a rectangle
+        bar.fillRect(0, 0, w, h);
+                    
+        //position the bar
+        bar.x = x;
+        bar.y = y;
+            
+        //Bar done
+        return bar;
+	}
+	
+	setBarValue(bar, value){
+		 //scale the bar
+		 bar.scaleX = value;
+	}
+
 }
 

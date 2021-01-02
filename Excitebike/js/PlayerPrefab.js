@@ -32,9 +32,8 @@ class Player {
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
         
-            //TODO no entenc per que no funciona aixo xddd
-            if (parseInt(this.currentHeat) < 0.5) {
-                this.currentHeat += this.accelerationRate * 0.1;
+            if (this.currentHeat < 0.5) {
+                this.currentHeat += this.accelerationRate/2;
             }
             console.clear();
             console.log(this.currentHeat);
@@ -42,7 +41,7 @@ class Player {
         else if(inputs.B_Key.isDown){
             this.speedX += this.accelerationRate;
             this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.accelerationRate;
+            if(this.currentHeat < 1) this.currentHeat += this.accelerationRate/2;
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
