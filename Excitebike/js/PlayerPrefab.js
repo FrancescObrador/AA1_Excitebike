@@ -25,6 +25,7 @@ class Player {
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
         this.wheeliesCounter = -1;
+        this.yPos = this.sprite.y;
     } 
 
     static loadAssets(scene){
@@ -213,19 +214,24 @@ class Player {
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
         }
+        // NO eliminar
+        this.yPos = this.sprite.y;
+        this.expectedLine = this.lines[this.currentLine];
     }
 
     rampActivate(){
-        this.isOnAir = true;
+        if(this.isTurning){
+            this.isTurning = false;
+            this.sprite.body.stop();
+        }
 
+        this.isOnAir = true;
+        this.isFalling = false;
         this.sprite.body.velocity.y = -this.speedX * 100;
-        // console.clear();
-        // console.log("Ramp - Activate");
     }
     rampDeactivate(){
         this.isFalling = true;
-        // console.clear();
-        // console.log("Ramp - Deactivate");
+
     }
 
     createAnims(){

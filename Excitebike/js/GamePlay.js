@@ -50,7 +50,7 @@ class GamePlay extends Phaser.Scene{
 
                 //console.log(playerPos);
                 //console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
-                obstacle.actOnPlayer(this.pilot,playerPos);
+                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine);
 
             }
         });
