@@ -24,6 +24,7 @@ class InputManager{
         this.Down_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.S);
         this.Left_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.A);
         this.Right_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin,Phaser.Input.Keyboard.KeyCodes.D);
+        this.P_Key = new Phaser.Input.Keyboard.Key(this.keyboardPlugin, Phaser.Input.Keyboard.KeyCodes.P);
 
         scene.input.keyboard.addKey(this.A_Key);
         scene.input.keyboard.addKey(this.B_Key);
@@ -31,6 +32,7 @@ class InputManager{
         scene.input.keyboard.addKey(this.Down_Key);
         scene.input.keyboard.addKey(this.Left_Key);
         scene.input.keyboard.addKey(this.Right_Key);
+        scene.input.keyboard.addKey(this.P_Key);
     }
 
 }

@@ -74,54 +74,68 @@ class GamePlay extends Phaser.Scene{
         this.texto.setCenterAlign();
 
         this.startTime = 5.0;
+        this.offsetTime = this.startTime;
         this.lapOneTime = 0;
         this.lapTwoTime = 0;
         this.finalTime = 0;
 
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
+        this.isPaused = false;
+        this.inputs.P_Key.on('up', this.Pause, this);
+    }
+
+    Pause(){
+        this.isPaused = !this.isPaused;
+        this.pilot.sprite.active = !this.isPaused;
+        // DO PAUSE STUFF
+        this.offsetTime = (this.game.getTime()/1000 - (this.timer));
     }
 
     update(){
 
-        this.pilot.customUpdate(this.inputs);
+        if(!this.isPaused){ 
 
-        if(this.pilotMapPosition >= this.goal.end)  // finish reached
-        {
-            this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
-            this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
-        } else {
-            this.backGround.x -= this.pilot.speedX;     // container scroll  
-            this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
-        }
-        
-        this.obstacles.forEach(obstacle => {
-           var playerPos = Math.trunc(this.pilotMapPosition);
-            if(this.isInside(playerPos, obstacle) ){
-                console.log(playerPos);
-                console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
+            this.pilot.customUpdate(this.inputs);
+    
+            if(this.pilotMapPosition >= this.goal.end)  // finish reached
+            {
+                this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
+                this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
+            } else {
+                this.backGround.x -= this.pilot.speedX;     // container scroll  
+                this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
             }
-        });
-       
-        //TIMER - sets the 3 variables in seconds - float
-        this.timer = (this.game.getTime()/1000)- this.startTime;
-        this.hudTimer.text = this.convertToTime(this.timer);
-        
-        if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
-            this.lapOneTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+            
+            this.obstacles.forEach(obstacle => {
+               var playerPos = Math.trunc(this.pilotMapPosition);
+                if(this.isInside(playerPos, obstacle) ){
+                    console.log(playerPos);
+                    console.log("A " + obstacle.type + ": " + obstacle.x.toString() + " - " + obstacle.end.toString());
+                }
+            });
+           
+            //TIMER - sets the 3 variables in seconds - float
+            this.timer = (this.game.getTime()/1000) - this.offsetTime;
+            this.hudTimer.text = this.convertToTime(this.timer);
+            
+            if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
+                this.lapOneTime = this.timer;
+                this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
+                this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+            }
+            if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
+                this.lapTwoTime = this.timer;
+                this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
+                this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+            }  
+            if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
+                this.finalTime = this.timer;
+                this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
+                this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+            } 
         }
-        if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
-            this.lapTwoTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
-        }  
-        if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
-            this.finalTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
-        } 
+
     }
     
     isInside(positionX, _obstacle)
