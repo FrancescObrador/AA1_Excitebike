@@ -5,8 +5,13 @@ class GamePlay extends Phaser.Scene{
 
     preload(){
         var ruta = 'assets/img/';
-        this.load.image('backGround', ruta + 'excitebike_map_1.png');
+        this.load.image('backGround', ruta + 'excitebike_map_1.png'); 
+        this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png'); 
+        this.load.image('backGroundLap3', ruta + 'excitebike_map_1_3.png'); 
+        this.load.image('hud', ruta + 'HUD.png'); 
+ 
         
+
         Player.loadAssets(this);
         this.load.xml('obsts', 'assets/map1Info.xml');
 
