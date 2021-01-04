@@ -72,7 +72,7 @@ class GamePlay extends Phaser.Scene{
         // HUD
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
-        this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0x5ce430);
+        this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     }
 
