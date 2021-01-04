@@ -40,7 +40,6 @@ class EndgameMenu extends Phaser.Scene{
 	}
 
 	create(){
-
 		// Setup inputs
 		this.inputs = new InputManager(this);
 		this.inputs.A_Key.on('up', this.loadStartMenu, this);
@@ -117,5 +116,5 @@ class EndgameMenu extends Phaser.Scene{
 		 result += (millis < 10)? ":0" + millis : ":" + millis;
 
 		 return result
-    }
+	}
 }
