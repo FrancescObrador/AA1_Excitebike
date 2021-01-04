@@ -3,9 +3,11 @@ class Obstacle {
         this.type = "ramp"; // Default value
         this.x = positionX;
         this.y = 0;
+        this.halfPoint = 0;
         this.end = 0;
         this.width = 0;
         this.height = 0;
+        this.maxHeight = 0;
         this.currentLane = lane;
 
         this.isLap1 = false;
@@ -35,31 +37,45 @@ class Obstacle {
                 this.width = 16;
                 this.isAllLane = false;
                 this.height = laneSize *2;
+                this.halfPoint = 16;
+                this.halfPoint = 15;
                 break;
 
             case "smallRamp":
                 this.width = 40;
                 this.height = allLanesSize;
+                this.halfPoint = 19;
+                this.maxHeight = 18;
                 break;
             case "bigRamp":
                 this.width = 72;
                 this.height = allLanesSize;
+                this.halfPoint = this.width/2;
+                this.maxHeight = 34;
                 break;
             case "bigLeftRamp":
                 this.width = 44;
                 this.height = allLanesSize;
+                this.halfPoint = 26;
+                this.maxHeight = 26;
                 break;
             case "bigRightRamp":
                 this.width = 44;
                 this.height = allLanesSize;
+                this.halfPoint = 15;
+                this.maxHeight = 26;
                 break;
             case "longRamp":
                 this.width = 72;
                 this.height = allLanesSize;
+                this.halfPoint = 36;
+                this.maxHeight = 17;
                 break;
             case "smallBump":
                 this.width = 24;
                 this.height = allLanesSize;
+                this.halfPoint = 12;
+                this.maxHeight = 10;
                 break;
             case "grassPatchStart": 
                 this.width = 80;
@@ -70,21 +86,28 @@ class Obstacle {
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isLap1 = true;
+                 this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
+                this.maxHeight = 32;
                 break; 
             case "lapTwo":
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isLap2 = true;
+                 this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
+                this.maxHeight = 32;
                 break; 
             case "finish":
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isFinish = true;
+                this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
+                this.maxHeight = 32;
                 break;
             default:
                 break;
         }
         this.end = this.x + this.width;
+        this.halfPoint += this.x;
 
         switch(this.currentLane){
             case -1:
@@ -108,4 +131,28 @@ class Obstacle {
 
         scene.add.existing(this);
     }  
+
+    actOnPlayer(player,x_player, y_player, y_expected){
+        switch(this.type){
+            case "tramp":
+                break;
+            case "booster":
+                break;
+            case "ramp":
+                if(x_player >= this.x && x_player <= this.halfPoint&&
+                    y_player >= y_expected - this.maxHeight) {
+                        console.log("___");
+                        console.log(y_player);
+                        console.log(y_expected + this.maxHeight);
+                    player.rampActivate();
+                }
+                else{
+                    player.rampDeactivate();
+                }
+                
+                break;
+            default:
+                break;
+        }
+    }
 }
