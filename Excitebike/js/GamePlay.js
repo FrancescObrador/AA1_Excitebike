@@ -96,7 +96,7 @@ class GamePlay extends Phaser.Scene{
                if(obstacle.type == "booster"){
                    this.pilot.currentHeat = 0;
                }
-                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine);
+                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
             }
         });
        

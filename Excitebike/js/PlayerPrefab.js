@@ -52,7 +52,7 @@ class Player {
         scene.load.image('pilot_wheelies_3',ruta + 'pilot_wheelies_3.png');
         scene.load.image('pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
         scene.load.image('pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
-
+        this.minY = 0;
 
     }
 
@@ -71,8 +71,6 @@ class Player {
             if (this.currentHeat < 0.5) {
                 this.currentHeat += this.accelerationRate/2;
             }
-            console.clear();
-            console.log(this.currentHeat);
         }
         else if(inputs.B_Key.isDown){
             this.speedX += this.accelerationRate;
@@ -93,7 +91,15 @@ class Player {
         //Y velocity
         if(this.isFalling){ //jugador esta caient
             
-            if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
+            if(this.minY >= 1){
+                this.sprite.body.velocity.y += this.gravity;
+
+                if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
+                    this.sprite.body.velocity.y = 0;
+                    this.sprite.y = this.lines[this.currentLine]  - this.minY;
+                }
+            }
+            else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
                 this.sprite.body.velocity.y = 0;
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
@@ -230,6 +236,7 @@ class Player {
         //FIX THIS SHIT - o potser no eh
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
+         
         }
         // NO eliminar
         this.yPos = this.sprite.y;
@@ -246,8 +253,10 @@ class Player {
         this.isFalling = false;
         this.sprite.body.velocity.y = -this.speedX * 100;
     }
-    rampDeactivate(){
+    rampDeactivate(height){
+        console.log(height);
         this.isFalling = true;
+        this.minY = height;
 
     }
 
