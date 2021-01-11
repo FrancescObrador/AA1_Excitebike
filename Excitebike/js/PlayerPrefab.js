@@ -5,24 +5,27 @@ class Player {
     constructor(scene, newLine){
 
         this.currScene = scene;
-        this.accelerationRate = 0.01;
+        this.accelerationRate = 0.02;
         this.gravity = 10;
         this.speedX = 0;
         this.speedY = 30;
-        this.maxSpeedXNormal = 1.5;
-        this.maxSpeedXBoost = 2.5;
+        this.jumpStr = 100;
+        // Por favor no bajar el maximo del 2.5
+        this.maxSpeedXNormal = 2.5;
+        this.maxSpeedXBoost = 3.0;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
+        this.isOnRamp = false;
         this.lines = [162,150,138,125];
         this.linesX = [70,86 ,102,117];
+        this.minY = this.lines[this.currentLine];
         this.OriginalXPos = this.linesX[this.currentLine];
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
         if(!this.animsCreated)this.createAnims();
         this.sprite.anims.play('moving',false);       
-
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
@@ -88,10 +91,11 @@ class Player {
             this.speedX = this.maxSpeedX;
         }
 
+
         //Y velocity
         if(this.isFalling){ //jugador esta caient
             
-            if(this.minY >= 1){
+            if(this.isOnRamp == true){
                 this.sprite.body.velocity.y += this.gravity;
 
                 if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
@@ -241,9 +245,11 @@ class Player {
         // NO eliminar
         this.yPos = this.sprite.y;
         this.expectedLine = this.lines[this.currentLine];
+
+        this.isOnRamp = false;
     }
 
-    rampActivate(){
+    rampActivate(strength, state){
         if(this.isTurning){
             this.isTurning = false;
             this.sprite.body.stop();
@@ -251,13 +257,14 @@ class Player {
 
         this.isOnAir = true;
         this.isFalling = false;
-        this.sprite.body.velocity.y = -this.speedX * 100;
+        this.isOnRamp = true;
+        this.sprite.body.velocity.y = -this.speedX * strength * this.jumpStr;
+        
     }
     rampDeactivate(height){
-        console.log(height);
         this.isFalling = true;
         this.minY = height;
-
+        this.isOnRamp = true;
     }
 
     createAnims(){

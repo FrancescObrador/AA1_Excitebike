@@ -10,7 +10,7 @@ class Obstacle {
         this.maxHeight = 0;
         this.midPartSize = 8;
         this.currentLane = lane;
-
+        this.subType = subType;
 
         this.isLap1 = false;
         this.isLap2 = false;
@@ -21,7 +21,7 @@ class Obstacle {
         var laneSize = 12;
         var allLanesSize = 48;
 
-        switch(subType){
+        switch(this.subType){
             case "mud":
                 this.width = 24;
                 this.isAllLane = false;
@@ -38,7 +38,8 @@ class Obstacle {
             case "miniRamp":
                 this.width = 16;
                 this.isAllLane = false;
-                this.height = laneSize *2;
+                this.height = laneSize;
+                this.maxHeight = 15;
                 this.halfPoint = 16;
                 this.midPartSize = 0;
                 break;
@@ -145,15 +146,25 @@ class Obstacle {
             case "booster":
                 break;
             case "ramp":
-                if(x_player >= this.x && x_player <= this.halfPoint && y_player >= y_expected - this.maxHeight) {
-                    player.rampActivate();
+                if(x_player >= this.x && x_player < this.halfPoint) {
+
+
+                    if( y_player >= y_expected - this.maxHeight){
+                        let catete_H = this.halfPoint - this.x;
+                        let catete_V = this.maxHeight;
+                        let angle = 0;
+                        if(catete_H != 0){
+                            angle = Math.atan(catete_V / catete_H);
+                        }
+                        player.rampActivate(angle);
+                    }else{
+                        player.rampDeactivate(this.maxHeight);
+                    }
                 }
                 else if(x_player >= this.halfPoint && (x_player <= this.halfPoint + this.midPartSize)){
-                    player.rampDeactivate(this.maxHeight); // TODO esto no termina de pillarlo en la posicion correcta
+                    player.rampDeactivate(this.maxHeight);
                 }
-                else if(x_player >= this.halfPoint + this.midPartSize){
-
-                 
+                else{
                     let catete_V = this.maxHeight;
                     let catete_H = this.end - this.halfPoint - this.midPartSize; 
                     let playerDist = this.end - x_player;
