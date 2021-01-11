@@ -249,7 +249,7 @@ class Player {
         this.isOnRamp = false;
     }
 
-    rampActivate(strength, state){
+    rampActivate(strength){
         if(this.isTurning){
             this.isTurning = false;
             this.sprite.body.stop();

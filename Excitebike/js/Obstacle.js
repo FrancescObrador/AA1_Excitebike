@@ -40,7 +40,7 @@ class Obstacle {
                 this.isAllLane = false;
                 this.height = laneSize;
                 this.maxHeight = 15;
-                this.halfPoint = 16;
+                this.halfPoint = this.width; 
                 this.midPartSize = 0;
                 break;
 
@@ -156,8 +156,15 @@ class Obstacle {
                         }
                         player.rampActivate(angle);
                     }else{
-                        player.rampDeactivate(this.maxHeight);
+                        if(this.subType == "miniRamp"){
+                            player.rampDeactivate(0);
+                        }else{
+                            player.rampDeactivate(this.maxHeight);
+                        }
                     }
+                }
+                else if(this.subType == "miniRamp"){
+                    player.rampDeactivate(0);
                 }
                 else if(x_player >= this.halfPoint && (x_player <= this.halfPoint + this.midPartSize)){
                     player.rampDeactivate(this.maxHeight);
