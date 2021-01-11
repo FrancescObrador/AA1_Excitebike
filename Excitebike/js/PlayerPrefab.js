@@ -1,6 +1,6 @@
-
 class Player {
     static animsCreated = false;
+    static soundsCreated = true;
 
     constructor(scene, newLine){
 
@@ -20,7 +20,9 @@ class Player {
         this.linesX = [70,86 ,102,117];
         this.OriginalXPos = this.linesX[this.currentLine];
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
-        if(!this.animsCreated)this.createAnims();
+        if(!this.animsCreated) this.createAnims();
+        if(!this.soundsCreated) this.createSounds();
+
         this.sprite.anims.play('moving',false);       
 
         this.tiltCounter = 0;
@@ -53,6 +55,14 @@ class Player {
         scene.load.image('pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
         scene.load.image('pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
 
+        ruta = 'assets/sounds/';
+        scene.load.audio('sfx_acc_normal', ruta + 'pilot_acc_normal.wav');
+        scene.load.audio('sfx_acc_boost', ruta + 'pilot_acc_boost.wav'); 
+        scene.load.audio('sfx_acc_reduced', ruta + 'pilot_acc_reduced.wav');
+        scene.load.audio('sfx_acc_none', ruta + 'pilot_acc_none.wav'); 
+        scene.load.audio('sfx_crash', ruta + 'pilot_crash.wav');
+        scene.load.audio('sfx_jump_normal', ruta + 'pilot_jump_normal.wav');
+        scene.load.audio('sfx_jump_super', ruta + 'pilot_jump_super.wav');
 
     }
 
@@ -277,6 +287,15 @@ class Player {
             frameRate: 5,
             repeat: -1
         });
+    }
+
+    createSounds(){
+        this.soundsCreated = true;
+
+        this.soundsTable = {};
+        this.soundsTable['acc_normal'] = juego.sound.add('sfx_acc_normal', {loop: true});
+        this.soundsTable['acc_normal'].play();
+
     }
 
     preUpdate(){
