@@ -10,18 +10,18 @@ class Obstacle {
         this.maxHeight = 0;
         this.midPartSize = 8;
         this.currentLane = lane;
-        this.subType = subType;
-
+        
         this.isLap1 = false;
         this.isLap2 = false;
         this.isFinish = false;
-
+        
         this.isAllLane = true;
-
+        this.obstSubType = subType;
+        
         var laneSize = 12;
         var allLanesSize = 48;
 
-        switch(this.subType){
+        switch(this.obstSubType){
             case "mud":
                 this.width = 24;
                 this.isAllLane = false;
@@ -147,8 +147,6 @@ class Obstacle {
                 break;
             case "ramp":
                 if(x_player >= this.x && x_player < this.halfPoint) {
-
-
                     if( y_player >= y_expected - this.maxHeight){
                         let catete_H = this.halfPoint - this.x;
                         let catete_V = this.maxHeight;

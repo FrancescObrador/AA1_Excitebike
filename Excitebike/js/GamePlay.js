@@ -124,8 +124,9 @@ class GamePlay extends Phaser.Scene{
     isInside(positionX, _obstacle)
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
-            if(_obstacle.subtype == "miniRamp"){
-                let a = 0;
+            if(_obstacle.obstSubType == "miniRamp"){
+                if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1) 
+                return true;
             }
             if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
             return true;
