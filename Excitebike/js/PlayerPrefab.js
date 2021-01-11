@@ -294,7 +294,18 @@ class Player {
 
         this.soundsTable = {};
         this.soundsTable['acc_normal'] = juego.sound.add('sfx_acc_normal', {loop: true});
-        this.soundsTable['acc_normal'].play();
+        this.soundsTable['acc_boost'] = juego.sound.add('sfx_acc_boost', {loop: true});
+        this.soundsTable['acc_reduced'] = juego.sound.add('sfx_acc_reduced', {loop: true});
+        this.soundsTable['acc_none'] = juego.sound.add('sfx_acc_none', {loop: true});
+        this.soundsTable['jump_normal'] = juego.sound.add('sfx_jump_normal');
+        this.soundsTable['jump_super'] = juego.sound.add('sfx_jump_super');
+        this.soundsTable['crash'] = juego.sound.add('sfx_crash', {loop: true});
+       
+    }
+
+    soundsManager(){
+
+        if(this.isOn)
 
     }
 
