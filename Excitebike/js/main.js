@@ -20,4 +20,4 @@ var config = {
 
 var juego = new Phaser.Game(config);
 var customDeltaTime = 1;
-var targetFPS = 60; 
+var framerate = 60; 

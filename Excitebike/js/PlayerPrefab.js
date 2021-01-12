@@ -5,14 +5,14 @@ class Player {
     constructor(scene, newLine){
 
         this.currScene = scene;
-        this.accelerationRate = 20;
+        this.accelerationRate = 2.5;
         this.gravity = 10;
         this.speedX = 0;
         this.speedY = 30;
-        this.jumpStr = 1;
+        this.jumpStr = 2;
         // Por favor no bajar el maximo del 2.5
-        this.maxSpeedXNormal = 250;
-        this.maxSpeedXBoost = 300;
+        this.maxSpeedXNormal = 200;
+        this.maxSpeedXBoost = 250;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
         this.isTurning = false;

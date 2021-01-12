@@ -74,17 +74,17 @@ class GamePlay extends Phaser.Scene{
 
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
-        this.fps = targetFPS;
+        framerate = 60;
         this.frames = 0;
-        this.testTime = this.getTime();
+        this.framerateTime = this.getTime();
     }
 
     update(){
         this.frames++;
         customDeltaTime = 1.0 / juego.loop.actualFps;
         if(this.getTime() - this.testTime >= 1000){
-            this.testTime = this.getTime();
-            this.fps = this.frames;
+            this.framerateTime = this.getTime();
+            framerate = this.frames;
             this.frames = 0;
         }
 
@@ -131,7 +131,7 @@ class GamePlay extends Phaser.Scene{
         } 
         this.customDeltaTime = this.getTime() - this.startFrame;
         console.clear();
-        console.log(this.fps);
+        console.log(framerate);
 
     }
     
