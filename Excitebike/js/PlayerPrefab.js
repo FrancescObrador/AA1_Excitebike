@@ -5,24 +5,27 @@ class Player {
     constructor(scene, newLine){
 
         this.currScene = scene;
-        this.accelerationRate = 0.01;
+        this.accelerationRate = 2.5;
         this.gravity = 10;
         this.speedX = 0;
         this.speedY = 30;
-        this.maxSpeedXNormal = 1.5;
-        this.maxSpeedXBoost = 2.5;
+        this.jumpStr = 2;
+        // Por favor no bajar el maximo del 2.5
+        this.maxSpeedXNormal = 200;
+        this.maxSpeedXBoost = 250;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
+        this.isOnRamp = false;
         this.lines = [162,150,138,125];
         this.linesX = [70,86 ,102,117];
+        this.minY = this.lines[this.currentLine];
         this.OriginalXPos = this.linesX[this.currentLine];
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
         if(!this.animsCreated)this.createAnims();
         this.sprite.anims.play('moving',false);       
-
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
@@ -52,7 +55,7 @@ class Player {
         scene.load.image('pilot_wheelies_3',ruta + 'pilot_wheelies_3.png');
         scene.load.image('pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
         scene.load.image('pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
-
+        this.minY = 0;
 
     }
 
@@ -65,35 +68,42 @@ class Player {
         }
 
         if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = this.maxSpeedXNormal;   
-            this.speedX += this.accelerationRate;
+            this.maxSpeedX = (this.maxSpeedXNormal );   
+            this.speedX += (this.accelerationRate );
         
             if (this.currentHeat < 0.5) {
-                this.currentHeat += this.accelerationRate/2;
+                this.currentHeat += ((this.accelerationRate/2) );
             }
-            console.clear();
-            console.log(this.currentHeat);
         }
         else if(inputs.B_Key.isDown){
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.accelerationRate/2;
+            this.speedX += (this.accelerationRate );
+            this.maxSpeedX = (this.maxSpeedXBoost);
+            if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 );
         }
         else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
+            this.speedX -= (this.accelerationRate );
         }
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
-        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = this.maxSpeedX;
+        else if(this.speedX > (this.maxSpeedX)){ //sino " i la velocitat major que la maxima la posem a maxima
+            this.speedX = (this.maxSpeedX);
         }
+
 
         //Y velocity
         if(this.isFalling){ //jugador esta caient
             
-            if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
+            if(this.isOnRamp == true){
+                this.sprite.body.velocity.y += (this.gravity);
+
+                if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
+                    this.sprite.body.velocity.y = 0;
+                    this.sprite.y = this.lines[this.currentLine]  - this.minY;
+                }
+            }
+            else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
                 this.sprite.body.velocity.y = 0;
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
@@ -103,7 +113,7 @@ class Player {
                 this.tiltCounter = 0;
             }
             else{
-                this.sprite.body.velocity.y += this.gravity; //sino simulem gravetat
+                this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
             }
 
             if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
@@ -230,13 +240,16 @@ class Player {
         //FIX THIS SHIT - o potser no eh
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
+         
         }
         // NO eliminar
         this.yPos = this.sprite.y;
         this.expectedLine = this.lines[this.currentLine];
+
+        this.isOnRamp = false;
     }
 
-    rampActivate(){
+    rampActivate(strength){
         if(this.isTurning){
             this.isTurning = false;
             this.sprite.body.stop();
@@ -244,11 +257,14 @@ class Player {
 
         this.isOnAir = true;
         this.isFalling = false;
-        this.sprite.body.velocity.y = -this.speedX * 100;
+        this.isOnRamp = true;
+        this.sprite.body.velocity.y = -this.speedX * strength * this.jumpStr;
+        
     }
-    rampDeactivate(){
+    rampDeactivate(height){
         this.isFalling = true;
-
+        this.minY = height;
+        this.isOnRamp = true;
     }
 
     createAnims(){
