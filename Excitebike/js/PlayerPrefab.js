@@ -68,7 +68,7 @@ class Player {
         }
 
         if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = this.maxSpeedXNormal;   
+            this.maxSpeedX = (this.maxSpeedXNormal * customDeltaTime);   
             this.speedX += (this.accelerationRate * customDeltaTime);
         
             if (this.currentHeat < 0.5) {
@@ -77,7 +77,7 @@ class Player {
         }
         else if(inputs.B_Key.isDown){
             this.speedX += (this.accelerationRate * customDeltaTime);
-            this.maxSpeedX = this.maxSpeedXBoost;
+            this.maxSpeedX = (this.maxSpeedXBoost* customDeltaTime);
             if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 * customDeltaTime);
         }
         else if(this.speedX > 0) {
@@ -87,8 +87,8 @@ class Player {
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
-        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = this.maxSpeedX;
+        else if(this.speedX > (this.maxSpeedX* customDeltaTime)){ //sino " i la velocitat major que la maxima la posem a maxima
+            this.speedX = (this.maxSpeedX* customDeltaTime);
         }
 
 

@@ -74,10 +74,9 @@ class GamePlay extends Phaser.Scene{
 
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
-        this.fps = 0;
+        this.fps = targetFPS;
         this.frames = 0;
         this.testTime = this.getTime();
-        customDeltaTime = 0;
     }
 
     update(){
