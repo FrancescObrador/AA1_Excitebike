@@ -5,14 +5,14 @@ class Player {
     constructor(scene, newLine){
 
         this.currScene = scene;
-        this.accelerationRate = 0.02;
+        this.accelerationRate = 20;
         this.gravity = 10;
         this.speedX = 0;
         this.speedY = 30;
-        this.jumpStr = 100;
+        this.jumpStr = 1;
         // Por favor no bajar el maximo del 2.5
-        this.maxSpeedXNormal = 2.5;
-        this.maxSpeedXBoost = 3.0;
+        this.maxSpeedXNormal = 250;
+        this.maxSpeedXBoost = 300;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
         this.isTurning = false;
@@ -68,27 +68,27 @@ class Player {
         }
 
         if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = (this.maxSpeedXNormal * customDeltaTime);   
-            this.speedX += (this.accelerationRate * customDeltaTime);
+            this.maxSpeedX = (this.maxSpeedXNormal );   
+            this.speedX += (this.accelerationRate );
         
             if (this.currentHeat < 0.5) {
-                this.currentHeat += ((this.accelerationRate/2) * customDeltaTime);
+                this.currentHeat += ((this.accelerationRate/2) );
             }
         }
         else if(inputs.B_Key.isDown){
-            this.speedX += (this.accelerationRate * customDeltaTime);
-            this.maxSpeedX = (this.maxSpeedXBoost* customDeltaTime);
-            if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 * customDeltaTime);
+            this.speedX += (this.accelerationRate );
+            this.maxSpeedX = (this.maxSpeedXBoost);
+            if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 );
         }
         else if(this.speedX > 0) {
-            this.speedX -= (this.accelerationRate * customDeltaTime);
+            this.speedX -= (this.accelerationRate );
         }
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
-        else if(this.speedX > (this.maxSpeedX* customDeltaTime)){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = (this.maxSpeedX* customDeltaTime);
+        else if(this.speedX > (this.maxSpeedX)){ //sino " i la velocitat major que la maxima la posem a maxima
+            this.speedX = (this.maxSpeedX);
         }
 
 
@@ -96,7 +96,7 @@ class Player {
         if(this.isFalling){ //jugador esta caient
             
             if(this.isOnRamp == true){
-                this.sprite.body.velocity.y += (this.gravity *  customDeltaTime);
+                this.sprite.body.velocity.y += (this.gravity);
 
                 if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
                     this.sprite.body.velocity.y = 0;
@@ -113,7 +113,7 @@ class Player {
                 this.tiltCounter = 0;
             }
             else{
-                this.sprite.body.velocity.y += (this.gravity * customDeltaTime); //sino simulem gravetat
+                this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
             }
 
             if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap

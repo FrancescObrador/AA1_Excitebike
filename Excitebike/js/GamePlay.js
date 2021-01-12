@@ -81,7 +81,7 @@ class GamePlay extends Phaser.Scene{
 
     update(){
         this.frames++;
-        customDeltaTime = targetFPS / this.fps;
+        customDeltaTime = 1.0 / juego.loop.actualFps;
         if(this.getTime() - this.testTime >= 1000){
             this.testTime = this.getTime();
             this.fps = this.frames;
@@ -96,8 +96,8 @@ class GamePlay extends Phaser.Scene{
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
             this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
         } else {
-            this.backGround.x -= this.pilot.speedX;     // container scroll  
-            this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
+            this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
+            this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         }
         
         this.obstacles.forEach(obstacle => {
