@@ -69,19 +69,19 @@ class Player {
 
         if (inputs.A_Key.isDown){ 
             this.maxSpeedX = this.maxSpeedXNormal;   
-            this.speedX += this.accelerationRate;
+            this.speedX += (this.accelerationRate * customDeltaTime);
         
             if (this.currentHeat < 0.5) {
-                this.currentHeat += this.accelerationRate/2;
+                this.currentHeat += ((this.accelerationRate/2) * customDeltaTime);
             }
         }
         else if(inputs.B_Key.isDown){
-            this.speedX += this.accelerationRate;
+            this.speedX += (this.accelerationRate * customDeltaTime);
             this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.accelerationRate/2;
+            if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 * customDeltaTime);
         }
         else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
+            this.speedX -= (this.accelerationRate * customDeltaTime);
         }
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
@@ -96,7 +96,7 @@ class Player {
         if(this.isFalling){ //jugador esta caient
             
             if(this.isOnRamp == true){
-                this.sprite.body.velocity.y += this.gravity;
+                this.sprite.body.velocity.y += (this.gravity *  customDeltaTime);
 
                 if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
                     this.sprite.body.velocity.y = 0;
@@ -113,7 +113,7 @@ class Player {
                 this.tiltCounter = 0;
             }
             else{
-                this.sprite.body.velocity.y += this.gravity; //sino simulem gravetat
+                this.sprite.body.velocity.y += (this.gravity * customDeltaTime); //sino simulem gravetat
             }
 
             if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap

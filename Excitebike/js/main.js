@@ -4,7 +4,7 @@ var config = {
     height: 240, 
     scene: [StartMenu, GamePlay, EndgameMenu],  
 	antialias: false,
-	render:{pixelArt:true},
+    render:{pixelArt:true},
 	scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -19,3 +19,5 @@ var config = {
 };
 
 var juego = new Phaser.Game(config);
+var customDeltaTime = 0;
+var targetFPS = 60; 
