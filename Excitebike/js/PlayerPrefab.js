@@ -6,6 +6,7 @@ class Player {
 
         this.currScene = scene;
         this.accelerationRate = 2.5;
+        this.overheatRate = 0.1;
         this.gravity = 10;
         this.speedX = 0;
         this.speedY = 30;
@@ -61,7 +62,7 @@ class Player {
 
     customUpdate(inputs){
 
-        if(this.currentHeat > this.baseHeat) this.currentHeat -= this.accelerationRate * 0.1;
+        if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
         if(this.currentHeat == 1){
             //TODO Implement "Crash"
@@ -72,13 +73,13 @@ class Player {
             this.speedX += (this.accelerationRate );
         
             if (this.currentHeat < 0.5) {
-                this.currentHeat += ((this.accelerationRate/2) );
+                this.currentHeat += this.overheatRate * customDeltaTime;
             }
         }
         else if(inputs.B_Key.isDown){
             this.speedX += (this.accelerationRate );
             this.maxSpeedX = (this.maxSpeedXBoost);
-            if(this.currentHeat < 1) this.currentHeat += (this.accelerationRate/2 );
+            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
         }
         else if(this.speedX > 0) {
             this.speedX -= (this.accelerationRate );
