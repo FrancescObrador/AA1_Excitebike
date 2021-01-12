@@ -142,9 +142,10 @@ class Obstacle {
     actOnPlayer(player,x_player, y_player, y_expected, index){
         switch(this.type){
             case "tramp":
+                player.isSpeedReduced = true;
                 break;
             case "booster":
-                this.pilot.currentHeat = 0;
+                player.currentHeat = 0;
                 break;
             case "ramp":
                 if(x_player >= this.x && x_player < this.halfPoint) {

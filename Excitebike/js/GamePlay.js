@@ -72,24 +72,22 @@ class GamePlay extends Phaser.Scene{
         // HUD
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
+        this.overheatText = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "OVERHEATH", 10).setOrigin(0.5); 
+        this.overheatText.visible = false; 
+        this.isGoLaunched = false; 
+
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
-        framerate = 60;
-        this.frames = 0;
-        this.framerateTime = this.getTime();
     }
 
     update(){
-        this.frames++;
         customDeltaTime = 1.0 / juego.loop.actualFps;
-        if(this.getTime() - this.testTime >= 1000){
-            this.framerateTime = this.getTime();
-            framerate = this.frames;
-            this.frames = 0;
-        }
+        
 
         this.pilot.customUpdate(this.inputs);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+
+        this.OverHeatTextHandler(); 
 
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
@@ -126,10 +124,6 @@ class GamePlay extends Phaser.Scene{
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
             this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
-        this.customDeltaTime = this.getTime() - this.startFrame;
-        console.clear();
-        console.log(framerate);
-
     }
     
     isInside(positionX, _obstacle)
@@ -196,12 +190,20 @@ class GamePlay extends Phaser.Scene{
 	setBarValue(bar, value){
 		 //scale the bar
 		 bar.scaleX = value;
-	}
-
-
-    getTime(){
-        let d = new Date();
-        return parseInt(d.getTime(), 10);
     }
+    
+    OverHeatTextHandler() { 
+        if(this.pilot.isOverHeated){ 
+            this.overheatText.visible = !!(parseInt(((this.timer%1)*10)%2)); // this returns alternatively true or fasle every 0.1 seconds 
+            if (!this.isGoLaunched) { 
+                this.isGoLaunched = true; 
+                this.time.delayedCall(2700, ()=> {this.overheatText.text = "GO"; this.isGoLaunched = false;}, [], this); 
+            } 
+        } else{ 
+            this.overheatText.visible = this.pilot.isOverHeated; 
+        } 
+    } 
+ 
+
 }
 

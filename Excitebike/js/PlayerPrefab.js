@@ -11,16 +11,21 @@ class Player {
         this.speedX = 0;
         this.speedY = 30;
         this.jumpStr = 2;
-        // Por favor no bajar el maximo del 2.5
+        this.maxSpeedXReduced = 100;
         this.maxSpeedXNormal = 200;
         this.maxSpeedXBoost = 250;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
+       
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
         this.isOnRamp = false;
-        this.lines = [162,150,138,125];
+        this.isSpeedReduced = false;
+        this.isOverheated = false;
+        this.isOnCrush = false;
+        
+        this.lines = [162,150,138,125,116];
         this.linesX = [70,86 ,102,117];
         this.minY = this.lines[this.currentLine];
         this.OriginalXPos = this.linesX[this.currentLine];
@@ -32,6 +37,7 @@ class Player {
         this.wheeliesTiltCounter = -1;
         this.wheeliesCounter = -1;
         this.yPos = this.sprite.y;
+        
         this.baseHeat = 0.25;
         this.currentHeat = this.baseHeat;       
     } 
@@ -64,32 +70,47 @@ class Player {
 
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
-        if(this.currentHeat == 1){
-            //TODO Implement "Crash"
+         // Overheat Handle
+         if(this.currentHeat >= 1){
+            this.isOverHeated = true;
+            this.crash();
+        }
+        
+        // Crash Handle
+        if(this.isOnCrash) {
+            this.handleCrash();
+            return;
         }
 
         if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = (this.maxSpeedXNormal );   
-            this.speedX += (this.accelerationRate );
+            this.maxSpeedX = this.maxSpeedXNormal;   
+            this.speedX += this.accelerationRate;
         
             if (this.currentHeat < 0.5) {
                 this.currentHeat += this.overheatRate * customDeltaTime;
             }
         }
         else if(inputs.B_Key.isDown){
-            this.speedX += (this.accelerationRate );
-            this.maxSpeedX = (this.maxSpeedXBoost);
+            this.speedX += this.accelerationRate;
+            this.maxSpeedX = this.maxSpeedXBoost;
             if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
         }
         else if(this.speedX > 0) {
-            this.speedX -= (this.accelerationRate );
+            this.speedX -= this.accelerationRate;
         }
+        
+        if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
+        
+        if(this.isSpeedReduced){
+            this.maxSpeedX = this.maxSpeedXReduced;
+        }
+        
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
             this.sprite.setTexture('pilotStanding');
         }
-        else if(this.speedX > (this.maxSpeedX)){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = (this.maxSpeedX);
+        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+            this.speedX = this.maxSpeedX;
         }
 
 
@@ -246,7 +267,7 @@ class Player {
         // NO eliminar
         this.yPos = this.sprite.y;
         this.expectedLine = this.lines[this.currentLine];
-
+        this.isSpeedReduced = false;
         this.isOnRamp = false;
     }
 
@@ -296,7 +317,29 @@ class Player {
         });
     }
 
+    crash() { // Generic Crash
+        this.isOnCrash = true;
+        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
+        this.speedX = 0;
+        this.sprite.setTexture('pilotStanding');
+    }
+
+    handleCrash() { // Function to handle every type of Crash (Go-out sequence) Overheat, Fall Crash and Bike-bike crash
+        if( this.sprite.y <= this.lines[this.lines.length-1]){
+            this.sprite.body.stop();
+            this.currentLine = this.lines.length-1;
+            this.isOverHeated? this.currScene.time.delayedCall(3000, this.overheatDelay, [], this) : this.isOnCrash = false;
+        }
+    }
+
+    overheatDelay(){
+        this.isOnCrash = false;
+        this.isOverHeated = false; 
+    }
+
     preUpdate(){
 
     } 
+
+    
 }
