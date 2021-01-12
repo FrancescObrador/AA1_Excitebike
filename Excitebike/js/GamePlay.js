@@ -74,9 +74,19 @@ class GamePlay extends Phaser.Scene{
 
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+        framerate = 60;
+        this.frames = 0;
+        this.framerateTime = this.getTime();
     }
 
     update(){
+        this.frames++;
+        customDeltaTime = 1.0 / juego.loop.actualFps;
+        if(this.getTime() - this.testTime >= 1000){
+            this.framerateTime = this.getTime();
+            framerate = this.frames;
+            this.frames = 0;
+        }
 
         this.pilot.customUpdate(this.inputs);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
@@ -86,20 +96,20 @@ class GamePlay extends Phaser.Scene{
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
             this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
         } else {
-            this.backGround.x -= this.pilot.speedX;     // container scroll  
-            this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
+            this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
+            this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         }
         
         this.obstacles.forEach(obstacle => {
-           var playerPos = Math.trunc(this.pilotMapPosition);
+        var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
-               if(obstacle.type == "booster"){
-                   this.pilot.currentHeat = 0;
-               }
+            if(obstacle.type == "booster"){
+                this.pilot.currentHeat = 0;
+            }
                 obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
             }
         });
-       
+    
         //TIMER - sets the 3 variables in seconds - float
         this.timer = (this.game.getTime()/1000)- this.startTime;
         this.hudTimer.text = this.convertToTime(this.timer);
@@ -119,6 +129,10 @@ class GamePlay extends Phaser.Scene{
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
             this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
+        this.customDeltaTime = this.getTime() - this.startFrame;
+        console.clear();
+        console.log(framerate);
+
     }
     
     isInside(positionX, _obstacle)
@@ -187,5 +201,10 @@ class GamePlay extends Phaser.Scene{
 		 bar.scaleX = value;
 	}
 
+
+    getTime(){
+        let d = new Date();
+        return parseInt(d.getTime(), 10);
+    }
 }
 
