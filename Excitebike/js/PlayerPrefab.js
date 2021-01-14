@@ -36,6 +36,7 @@ class Player {
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
         this.wheeliesCounter = -1;
+        this.isOnWheelies;
         this.yPos = this.sprite.y;
         
         this.baseHeat = 0.25;
@@ -111,6 +112,7 @@ class Player {
         }
         else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
             this.speedX = this.maxSpeedX;
+            
         }
 
 
@@ -130,9 +132,35 @@ class Player {
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
                 this.isOnAir = false;
-                this.frontTiltCounter = -1;
-                this.wheeliesTiltCounter = -1;
                 this.tiltCounter = 0;
+
+                if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja
+                    this.isOnCrash;
+                    this.frontTiltCounter = -1;
+                    this.wheeliesTiltCounter = -1;
+                    this.wheeliesCounter = -1;
+                }
+
+                else if(this.wheeliesTiltCounter >= 0){ //si esta fent wheelies reduim velocitat (cal revisar valors)
+                    if(this.wheeliesTiltCounter >= 4){
+                        this.speedX *= 0.4;
+                    }
+                    else if(this.wheeliesTiltCounter >= 2){
+                        this.speedX *= 0.6;
+                    }
+                    else{
+                        this.speedX *= 0.90;
+                    }
+                    this.wheeliesCounter = this.wheeliesTiltCounter;
+                }
+                else{
+                    this.frontTiltCounter = -1;
+                    this.wheeliesTiltCounter = -1;
+                    this.wheeliesCounter = -1;
+                }
+               
+                
+
             }
             else{
                 this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
@@ -184,6 +212,11 @@ class Player {
             }
                 
         }
+        else if(this.isOnAir){
+            if(this.wheeliesTiltCounter >= 0){
+                this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
+            }
+        }
         else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
             if(!this.isTurning) { //sino estem cambiant de carril
                 
@@ -203,36 +236,54 @@ class Player {
                     }
                 }
                 //WHEELIES
-                if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
-                    this.tiltCounter = 0;
-                }
-                else if(inputs.Left_Key.isDown){
-                    this.tiltCounter++;
-                    if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                        this.tiltCounter = 0;
+                if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
+                else {this.isOnWheelies = false;}
 
-                        this.wheeliesCounter++;
-                        if(this.wheeliesCounter > 5){
-                            this.wheeliesCounter = 5;
+                if(this.speedX >= (this.maxSpeedX * 0.75)){
+                    if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
+                        this.tiltCounter = 0;
+                    }
+                    else if(inputs.Left_Key.isDown){
+                        this.tiltCounter++;
+                        if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                            this.tiltCounter = 0;
+    
+                            this.wheeliesCounter++;
+                            if(this.wheeliesCounter > 5){
+                                this.wheeliesCounter = 5;
+                            }
                         }
                     }
+                    else if(inputs.Right_Key.isDown){
+                        this.tiltCounter++; 
+                        if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                            this.tiltCounter = 0;
+    
+                            this.wheeliesCounter--;
+                            if(this.wheeliesCounter < -1){
+                                this.wheeliesCounter = -1;
+                            }
+                        }
+                    }
+                    if(this.wheeliesCounter >= 0){
+                        this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
+                    }
                 }
-                else if(inputs.Right_Key.isDown){
+                else if(this.isOnWheelies){
                     this.tiltCounter++; 
-                    if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                    if(this.tiltCounter > 5){
                         this.tiltCounter = 0;
-
                         this.wheeliesCounter--;
-                        if(this.wheeliesCounter < -1){
-                            this.wheeliesCounter = -1;
-                        }
+                    }
+                    
+
+                    if(this.wheeliesCounter >= 0){
+                        this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
                     }
                 }
-                if(this.wheeliesCounter >= 0){
-                    this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
-                }
+                
             }
-            else {
+            else { //si esta cambiant de carril
                 if(this.turningRight){ //si esta girant dreta
                     this.sprite.setTexture('pilotTurnRight');
                 }
@@ -282,6 +333,23 @@ class Player {
         this.isOnRamp = true;
         this.sprite.body.velocity.y = -this.speedX * strength * this.jumpStr;
         
+        if(strength > 0.78){
+            this.wheeliesTiltCounter = 3;
+        }
+        else if(strength > 0.75){
+            this.wheeliesTiltCounter = 2;
+        }
+        else if(strength > 0.48){
+            this.wheeliesTiltCounter = 0;
+        }
+
+        if(this.wheeliesTiltCounter <= this.wheeliesCounter){
+            this.wheeliesTiltCounter = this.wheeliesCounter;
+        }
+        else{
+            this.wheeliesCounter = -1;
+        }
+
     }
     rampDeactivate(height){
         this.isFalling = true;
