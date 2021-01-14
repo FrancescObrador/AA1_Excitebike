@@ -127,8 +127,6 @@ class GamePlay extends Phaser.Scene{
             this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
         this.customDeltaTime = this.getTime() - this.startFrame;
-        console.clear();
-        console.log(framerate);
 
     }
     
