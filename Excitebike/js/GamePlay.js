@@ -56,6 +56,8 @@ class GamePlay extends Phaser.Scene{
         this.pilotMapPosition = this.pilot.sprite.x;
 
         this.inputs = new InputManager(this);
+        
+        //ENEMIES
 
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
