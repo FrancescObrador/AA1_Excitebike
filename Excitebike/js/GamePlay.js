@@ -13,6 +13,8 @@ class GamePlay extends Phaser.Scene{
         
 
         Player.loadAssets(this);
+        Enemy.loadAssets(this);
+
         this.load.xml('obsts', 'assets/map1Info.xml');
 
         this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
@@ -58,6 +60,10 @@ class GamePlay extends Phaser.Scene{
         this.inputs = new InputManager(this);
         
         //ENEMIES
+
+        //this.enemy = new Enemy(this, 0);
+        this.enemies;
+        //this.enemies.push();
 
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);

@@ -22,7 +22,7 @@ class Enemy {
         this.isOnRamp = false;
         this.isOnRampError = 0.25;
         this.isSpeedReduced = false;
-        this.isOverheated = false;
+
         this.isOnCrush = false;
         
         this.lines = [162,150,138,125,116];
@@ -42,39 +42,32 @@ class Enemy {
     } 
 
     static loadAssets(scene){
-        var ruta = 'assets/img/pilot/';
-        scene.load.image('motorbike',ruta + 'motorbike.png');
-        scene.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
-        scene.load.spritesheet('pilotGetUp', ruta + 'pilot_get_up.png', {frameWidth: 77/3, frameHeight: 21});
-        scene.load.spritesheet('pilotMoving', ruta + 'pilot_moving.png',{frameWidth: 40/2, frameHeight: 21});
-        scene.load.spritesheet('pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
-        scene.load.image('pilotTurnLeft',ruta + 'pilot_turning_left.png');
-        scene.load.image('pilotTurnRight',ruta + 'pilot_turning_right.png');
-        scene.load.image('pilotStanding',ruta + 'pilot_standing.png');
-        scene.load.image('pilot_front_tilt_0',ruta + 'pilot_front_tilt_0.png');
-        scene.load.image('pilot_front_tilt_1',ruta + 'pilot_front_tilt_1.png');
-        scene.load.image('pilot_front_tilt_2',ruta + 'pilot_front_tilt_2.png');
-        scene.load.image('pilot_front_tilt_3',ruta + 'pilot_front_tilt_3.png');
-        scene.load.image('pilot_wheelies_0',ruta + 'pilot_wheelies_0.png');
-        scene.load.image('pilot_wheelies_1',ruta + 'pilot_wheelies_1.png');
-        scene.load.image('pilot_wheelies_2',ruta + 'pilot_wheelies_2.png');
-        scene.load.image('pilot_wheelies_3',ruta + 'pilot_wheelies_3.png');
-        scene.load.image('pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
-        scene.load.image('pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
+        var ruta = 'assets/img/enemy_purple/';
+        scene.load.image('enemy_motorbike',ruta + 'motorbike.png');
+        scene.load.spritesheet('enemy_pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
+        scene.load.spritesheet('enemy_pilotGetUp', ruta + 'pilot_get_up.png', {frameWidth: 77/3, frameHeight: 21});
+        scene.load.spritesheet('enemy_pilotMoving', ruta + 'pilot_moving.png',{frameWidth: 40/2, frameHeight: 21});
+        scene.load.spritesheet('enemy_pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
+        scene.load.image('enemy_pilotTurnLeft',ruta + 'pilot_turning_left.png');
+        scene.load.image('enemy_pilotTurnRight',ruta + 'pilot_turning_right.png');
+        scene.load.image('enemy_pilotStanding',ruta + 'pilot_standing.png');
+        scene.load.image('enemy_pilot_front_tilt_0',ruta + 'pilot_front_tilt_0.png');
+        scene.load.image('enemy_pilot_front_tilt_1',ruta + 'pilot_front_tilt_1.png');
+        scene.load.image('enemy_pilot_front_tilt_2',ruta + 'pilot_front_tilt_2.png');
+        scene.load.image('enemy_pilot_front_tilt_3',ruta + 'pilot_front_tilt_3.png');
+        scene.load.image('enemy_pilot_wheelies_0',ruta + 'pilot_wheelies_0.png');
+        scene.load.image('enemy_pilot_wheelies_1',ruta + 'pilot_wheelies_1.png');
+        scene.load.image('enemy_pilot_wheelies_2',ruta + 'pilot_wheelies_2.png');
+        scene.load.image('enemy_pilot_wheelies_3',ruta + 'pilot_wheelies_3.png');
+        scene.load.image('enemy_pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
+        scene.load.image('enemy_pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
         this.minY = 0;
 
     }
 
     customUpdate(inputs){
 
-        if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
-         // Overheat Handle
-         if(this.currentHeat >= 1){
-            this.isOverHeated = true;
-            this.crash();
-        }
-        
         // Crash Handle
         if(this.isOnCrash) {
             this.handleCrash();
@@ -85,14 +78,12 @@ class Enemy {
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
         
-            if (this.currentHeat < 0.5) {
-                this.currentHeat += this.overheatRate * customDeltaTime;
-            }
+           
         }
         else if(inputs.B_Key.isDown){
             this.speedX += this.accelerationRate;
             this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+            
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
@@ -388,26 +379,26 @@ class Enemy {
     createAnims(){
         this.animsCreated = true;
         this.currScene.anims.create({
-            key: 'running',
-            frames: this.currScene.anims.generateFrameNumbers('pilotRunning', { start: 0, end: 1 }),
+            key: 'enemy_running',
+            frames: this.currScene.anims.generateFrameNumbers('enemy_pilotRunning', { start: 0, end: 1 }),
             frameRate: 5,
             repeat: -1
         });
         this.currScene.anims.create({
-            key: 'moving',
-            frames: this.currScene.anims.generateFrameNumbers('pilotMoving', { start: 0, end: 1 }),
+            key: 'enemy_moving',
+            frames: this.currScene.anims.generateFrameNumbers('enemy_pilotMoving', { start: 0, end: 1 }),
             frameRate: 10,
             repeat: -1
         });
         this.currScene.anims.create({
-            key: 'loop',
-            frames: this.currScene.anims.generateFrameNumbers('pilotLoop', { start: 0, end: 3 }),
+            key: 'enemy_loop',
+            frames: this.currScene.anims.generateFrameNumbers('enemy_pilotLoop', { start: 0, end: 3 }),
             frameRate: 5,
             repeat: -1
         });
         this.currScene.anims.create({
-            key: 'getUp',
-            frames: this.currScene.anims.generateFrameNumbers('pilotGetUp', { start: 0, end: 2 }),
+            key: 'enemy_getUp',
+            frames: this.currScene.anims.generateFrameNumbers('enemy_pilotGetUp', { start: 0, end: 2 }),
             frameRate: 5,
             repeat: -1
         });
@@ -420,18 +411,14 @@ class Enemy {
         this.sprite.setTexture('pilotStanding');
     }
 
-    handleCrash() { // Function to handle every type of Crash (Go-out sequence) Overheat, Fall Crash and Bike-bike crash
+    handleCrash() { // Function to handle every type of Crash (Go-out sequence) 
         if( this.sprite.y <= this.lines[this.lines.length-1]){
             this.sprite.body.stop();
             this.currentLine = this.lines.length-1;
-            this.isOverHeated? this.currScene.time.delayedCall(3000, this.overheatDelay, [], this) : this.isOnCrash = false;
+            
         }
     }
 
-    overheatDelay(){
-        this.isOnCrash = false;
-        this.isOverHeated = false; 
-    }
 
     preUpdate(){
 
