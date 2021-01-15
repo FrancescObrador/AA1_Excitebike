@@ -124,6 +124,8 @@ class GamePlay extends Phaser.Scene{
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
             this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
+        this.customDeltaTime = this.getTime() - this.startFrame;
+
     }
     
     isInside(positionX, _obstacle)

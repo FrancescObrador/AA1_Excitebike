@@ -36,11 +36,11 @@ class Obstacle {
                 break;
 
             case "miniRamp":
-                this.width = 16;
+                this.width = 32;
                 this.isAllLane = false;
                 this.height = laneSize;
                 this.maxHeight = 15;
-                this.halfPoint = this.width; 
+                this.halfPoint = 16; 
                 this.midPartSize = 0;
                 break;
 
@@ -166,6 +166,7 @@ class Obstacle {
                     }
                 }
                 else if(this.subType == "miniRamp"){
+                    console.log("HE");
                     player.rampDeactivate(0);
                 }
                 else if(x_player >= this.halfPoint && (x_player <= this.halfPoint + this.midPartSize)){
