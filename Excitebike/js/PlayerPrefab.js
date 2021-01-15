@@ -21,6 +21,7 @@ class Player {
         this.isOnAir = false;
         this.isFalling = false;
         this.isOnRamp = false;
+        this.isOnRampError = 0.5;
         this.isSpeedReduced = false;
         this.isOverheated = false;
         this.isOnCrush = false;
@@ -115,10 +116,10 @@ class Player {
             
         }
 
-
         //Y velocity
         if(this.isFalling){ //jugador esta caient
             
+
             if(this.isOnRamp == true){
                 this.sprite.body.velocity.y += (this.gravity);
 
@@ -134,22 +135,52 @@ class Player {
                 this.isOnAir = false;
                 this.tiltCounter = 0;
 
-                if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja
-                    this.isOnCrash;
+                if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
+
                     this.frontTiltCounter = -1;
                     this.wheeliesTiltCounter = -1;
                     this.wheeliesCounter = -1;
+                    
+                    var aux = this.lines[this.currentLine] - this.minY - this.yPos;
+                    if(aux < 0){
+                        aux *= -1;
+                    }
+                    if(aux <= this.isOnRampError){
+                        console.log("alive");
+                    }
+                    else{
+                        console.log("crashed");
+                        this.isOnCrash;
+                    }
+                    
                 }
 
                 else if(this.wheeliesTiltCounter >= 0){ //si esta fent wheelies reduim velocitat (cal revisar valors)
                     if(this.wheeliesTiltCounter >= 4){
-                        this.speedX *= 0.4;
+                        if(this.speedX > this.maxSpeedXBoost){
+                            this.speedX *= 0.3;
+                        }
+                        else{
+                            this.speedX *= 0.4;
+                        }
+                        
                     }
                     else if(this.wheeliesTiltCounter >= 2){
-                        this.speedX *= 0.6;
+                        if(this.speedX > this.maxSpeedXBoost){
+                            this.speedX *= 0.5;
+                        }
+                        else{
+                            this.speedX *= 0.6;
+                        }
+                        
                     }
                     else{
-                        this.speedX *= 0.90;
+                        if(this.speedX > this.maxSpeedXBoost){
+                            this.speedX *= 0.8;
+                        }
+                        else{
+                            this.speedX *= 0.9;
+                        }
                     }
                     this.wheeliesCounter = this.wheeliesTiltCounter;
                 }
@@ -271,7 +302,7 @@ class Player {
                 }
                 else if(this.isOnWheelies){
                     this.tiltCounter++; 
-                    if(this.tiltCounter > 5){
+                    if(this.tiltCounter > 4){
                         this.tiltCounter = 0;
                         this.wheeliesCounter--;
                     }
