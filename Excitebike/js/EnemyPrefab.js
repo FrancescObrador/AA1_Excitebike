@@ -29,9 +29,9 @@ class Enemy {
         this.linesX = [70,86 ,102,117];
         this.minY = this.lines[this.currentLine];
         this.OriginalXPos = this.linesX[this.currentLine];
-        this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
+        this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'enemy_pilotStanding');
         if(!this.animsCreated)this.createAnims();
-        this.sprite.anims.play('moving',false);       
+        this.sprite.anims.play('enemy_moving',false);       
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
@@ -97,7 +97,7 @@ class Enemy {
         
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
-            this.sprite.setTexture('pilotStanding');
+            this.sprite.setTexture('enemy_pilotStanding');
         }
         else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
             this.speedX = this.maxSpeedX;
@@ -224,16 +224,16 @@ class Enemy {
                 }
             }
             if(this.frontTiltCounter >= 0){
-                this.sprite.setTexture('pilot_front_tilt_' + this.frontTiltCounter);
+                this.sprite.setTexture('enemy_pilot_front_tilt_' + this.frontTiltCounter);
             }
             else if(this.wheeliesTiltCounter >= 0){
-                this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
+                this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
             }
                 
         }
         else if(this.isOnAir){
             if(this.wheeliesTiltCounter >= 0){
-                this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
+                this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
             }
         }
         else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
@@ -285,7 +285,7 @@ class Enemy {
                         }
                     }
                     if(this.wheeliesCounter >= 0){
-                        this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
+                        this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
                     }
                 }
                 else if(this.isOnWheelies){
@@ -297,17 +297,17 @@ class Enemy {
                     
 
                     if(this.wheeliesCounter >= 0){
-                        this.sprite.setTexture('pilot_wheelies_' + this.wheeliesCounter);
+                        this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
                     }
                 }
                 
             }
             else { //si esta cambiant de carril
                 if(this.turningRight){ //si esta girant dreta
-                    this.sprite.setTexture('pilotTurnRight');
+                    this.sprite.setTexture('enemy_pilotTurnRight');
                 }
                 else{ //si esta girant esquerra
-                    this.sprite.setTexture('pilotTurnLeft');
+                    this.sprite.setTexture('enemy_pilotTurnLeft');
                 }
                 if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){ //si arriba al carril de destí - Dreta
                     this.sprite.body.stop();
@@ -408,7 +408,7 @@ class Enemy {
         this.isOnCrash = true;
         this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
         this.speedX = 0;
-        this.sprite.setTexture('pilotStanding');
+        this.sprite.setTexture('enemy_pilotStanding');
     }
 
     handleCrash() { // Function to handle every type of Crash (Go-out sequence) 

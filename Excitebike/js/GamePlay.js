@@ -62,8 +62,8 @@ class GamePlay extends Phaser.Scene{
         //ENEMIES
 
         //this.enemy = new Enemy(this, 0);
-        this.enemies;
-        //this.enemies.push();
+        this.enemies = [];
+        this.enemies.push(new Enemy(this, 0));
 
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
@@ -94,6 +94,10 @@ class GamePlay extends Phaser.Scene{
 
         this.pilot.customUpdate(this.inputs);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+
+        for(var i = 0; i< this.enemies.length;i++){
+            this.enemies[i].customUpdate(this.inputs);
+        }
 
         this.OverHeatTextHandler(); 
 
