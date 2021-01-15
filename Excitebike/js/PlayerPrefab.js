@@ -21,7 +21,7 @@ class Player {
         this.isOnAir = false;
         this.isFalling = false;
         this.isOnRamp = false;
-        this.isOnRampError = 0.5;
+        this.isOnRampError = 0.25;
         this.isSpeedReduced = false;
         this.isOverheated = false;
         this.isOnCrush = false;
