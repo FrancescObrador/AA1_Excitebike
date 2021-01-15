@@ -130,7 +130,7 @@ class GamePlay extends Phaser.Scene{
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
             if(_obstacle.obstSubType == "miniRamp"){
-                if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1) 
+                if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1 ||this.pilot.currentLine == _obstacle.currentLane + 2 ) 
                 return true;
             }
             if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
