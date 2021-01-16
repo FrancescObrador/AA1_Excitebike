@@ -96,7 +96,7 @@ class GamePlay extends Phaser.Scene{
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
 
         for(var i = 0; i< this.enemies.length;i++){
-            this.enemies[i].customUpdate(this.inputs);
+            this.enemies[i].customUpdate(this.pilot.pilotMapPosition,this.pilot.speedX);
         }
 
         this.OverHeatTextHandler(); 

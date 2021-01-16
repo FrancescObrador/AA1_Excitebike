@@ -39,6 +39,9 @@ class Enemy {
         this.isOnWheelies;
         this.yPos = this.sprite.y;
           
+        this.PressA = false;
+        this.PressB = false;
+        this.PressForward = false;
     } 
 
     static loadAssets(scene){
@@ -65,7 +68,7 @@ class Enemy {
 
     }
 
-    customUpdate(inputs){
+    customUpdate(playerX,playerVX){
 
 
         // Crash Handle
@@ -74,13 +77,13 @@ class Enemy {
             return;
         }
 
-        if (inputs.A_Key.isDown){ 
+        if (this.PressA){ 
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
         
            
         }
-        else if(inputs.B_Key.isDown){
+        else if(this.PressB){
             this.speedX += this.accelerationRate;
             this.maxSpeedX = this.maxSpeedXBoost;
             
@@ -185,10 +188,10 @@ class Enemy {
                 this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
             }
 
-            if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
-                this.tiltCounter = 0;
-            }
-            else if(inputs.Right_Key.isDown){ //si apretem dreta
+            // if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
+            //     this.tiltCounter = 0;
+            // }
+            if(this.PressForward){ //si apretem dreta
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -205,24 +208,24 @@ class Enemy {
                     }
                 }
             }
-            else if(inputs.Left_Key.isDown){ //si apretem esquerra
-                this.tiltCounter++;
-                if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                    this.tiltCounter = 0;
+            // else if(inputs.Left_Key.isDown){ //si apretem esquerra
+            //     this.tiltCounter++;
+            //     if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+            //         this.tiltCounter = 0;
 
 
-                    if(this.frontTiltCounter <0){ //si no esta fent front tilt
-                        this.wheeliesTiltCounter++;
-                        if(this.wheeliesTiltCounter > 5){
-                            this.wheeliesTiltCounter = 5;
-                        }
-                    }
-                    this.frontTiltCounter--;
-                    if(this.frontTiltCounter < -1){
-                        this.frontTiltCounter = -1;
-                    }
-                }
-            }
+            //         if(this.frontTiltCounter <0){ //si no esta fent front tilt
+            //             this.wheeliesTiltCounter++;
+            //             if(this.wheeliesTiltCounter > 5){
+            //                 this.wheeliesTiltCounter = 5;
+            //             }
+            //         }
+            //         this.frontTiltCounter--;
+            //         if(this.frontTiltCounter < -1){
+            //             this.frontTiltCounter = -1;
+            //         }
+            //     }
+            // }
             if(this.frontTiltCounter >= 0){
                 this.sprite.setTexture('enemy_pilot_front_tilt_' + this.frontTiltCounter);
             }
@@ -240,29 +243,29 @@ class Enemy {
             if(!this.isTurning) { //sino estem cambiant de carril
                 
                 if(this.wheeliesCounter < 0){ //sino esta fent wheelies
-                    if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
-                        this.currentLine++;
-                        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                        this.isTurning = true;
+                    // if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
+                    //     this.currentLine++;
+                    //     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
+                    //     this.isTurning = true;
                         
-                        this.turningRight = false;
-                    } 
-                    else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
-                        this.currentLine--;
-                        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                        this.isTurning = true;
-                        this.turningRight = true;
-                    }
+                    //     this.turningRight = false;
+                    // } 
+                    // else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
+                    //     this.currentLine--;
+                    //     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
+                    //     this.isTurning = true;
+                    //     this.turningRight = true;
+                    // }
                 }
                 //WHEELIES
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
                 else {this.isOnWheelies = false;}
 
                 if(this.speedX >= (this.maxSpeedX * 0.75)){
-                    if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
-                        this.tiltCounter = 0;
-                    }
-                    else if(inputs.Left_Key.isDown){
+                    // if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
+                    //     this.tiltCounter = 0;
+                    // }
+                    if(this.PressForward){
                         this.tiltCounter++;
                         if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                             this.tiltCounter = 0;
@@ -273,17 +276,17 @@ class Enemy {
                             }
                         }
                     }
-                    else if(inputs.Right_Key.isDown){
-                        this.tiltCounter++; 
-                        if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                            this.tiltCounter = 0;
+                    // else if(inputs.Right_Key.isDown){
+                    //     this.tiltCounter++; 
+                    //     if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
+                    //         this.tiltCounter = 0;
     
-                            this.wheeliesCounter--;
-                            if(this.wheeliesCounter < -1){
-                                this.wheeliesCounter = -1;
-                            }
-                        }
-                    }
+                    //         this.wheeliesCounter--;
+                    //         if(this.wheeliesCounter < -1){
+                    //             this.wheeliesCounter = -1;
+                    //         }
+                    //     }
+                    // }
                     if(this.wheeliesCounter >= 0){
                         this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
                     }
