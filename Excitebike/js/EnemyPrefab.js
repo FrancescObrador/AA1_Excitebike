@@ -42,6 +42,7 @@ class Enemy {
         this.PressA = false;
         this.PressB = false;
         this.PressForward = false;
+        this.mapPosition = this.linesX[this.currentLine];
     } 
 
     static loadAssets(scene){
@@ -70,6 +71,8 @@ class Enemy {
 
     customUpdate(playerX,playerVX){
 
+        var aux = playerX - this.mapPosition;
+        this.sprite.x = this.linesX[1] - aux;
 
         // Crash Handle
         if(this.isOnCrash) {

@@ -174,7 +174,7 @@ class Player {
                         }
                         
                     }
-                    else{
+                    else if(this.wheeliesTiltCounter >= 1){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
