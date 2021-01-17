@@ -80,6 +80,8 @@ class GamePlay extends Phaser.Scene{
         this.finalTime = 0;
 
         // HUD
+        this.countdownTime = 15.0;
+        this.timer = 0;
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
         this.overheatText = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "OVERHEATH", 10).setOrigin(0.5); 
@@ -90,10 +92,12 @@ class GamePlay extends Phaser.Scene{
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
         
         this.isPaused = false; 
-        this.inputs.P_Key.on('up', this.Pause, this); 
+        this.ChangePauseState();
+        this.isInforcedPause = true;
+        this.inputs.P_Key.on('up', this.ChangePauseState, this); 
     } 
  
-    Pause(){ 
+    ChangePauseState(){ 
         this.isPaused = !this.isPaused; 
         this.pilot.sprite.active = !this.isPaused; 
     }
@@ -102,12 +106,30 @@ class GamePlay extends Phaser.Scene{
         
         customDeltaTime = 1.0 / juego.loop.actualFps;
 
+        if(this.isInforcedPause){
+            this.timer += customDeltaTime;
+            console.log(this.timer);
+            if(this.timer >= this.countdownTime-15) {
+                this.isInforcedPause = false;
+                this.ChangePauseState();
+                this.timer = 0;
+            }
+        }
+
         if(!this.isPaused){
             this.timer += customDeltaTime;
             this.pilot.customUpdate(this.inputs);
-            for(var i = 0; i< this.enemies.length;i++){
-                this.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
-            }
+ 
+            this.enemies.forEach(enemy => {
+                enemy.customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
+
+                if(this.physics.overlap(this.pilot.sprite, enemy.sprite)){
+                    if(this.pilot.currentLine == enemy.currentLine){
+                        this.pilot.crash();
+                    }
+                }
+            });
+
             this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     
             this.overHeatTextHandler(); 
@@ -159,7 +181,6 @@ class GamePlay extends Phaser.Scene{
 
     timerManager(){
         //TIMER - sets the 3 variables in seconds - float
-        this.timer = (this.game.getTime()/1000)- this.startTime;
         this.hudTimer.text = this.convertToTime(this.timer);
         
         if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){

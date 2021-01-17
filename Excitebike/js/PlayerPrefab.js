@@ -94,14 +94,16 @@ class Player {
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
         
-            if (this.currentHeat < 0.5) {
+            if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
                 this.currentHeat += this.overheatRate * customDeltaTime;
             }
         }
         else if(inputs.B_Key.isDown){
             this.speedX += this.accelerationRate;
             this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+            if(this.currentHeat < 1 && !this.isOnAir && !this.isOnRamp) { 
+                this.currentHeat += this.overheatRate*1.5 * customDeltaTime; 
+            }
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
