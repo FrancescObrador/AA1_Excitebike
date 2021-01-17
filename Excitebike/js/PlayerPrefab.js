@@ -2,8 +2,19 @@ class Player {
     static animsCreated = false;
     static soundsCreated = true;
 
+    
+    PlayerState = {
+        STOPED: "STOPPED",
+        RUNNING: "RUNNING",
+        SLOWING_DOWN: "SLOWING DOWN",
+        CRASHED: "CRASH",
+        RUNNING_BOOST: "BOOST",
+        REDUCED_SPEED: "REDUCED SPEED"
+    };
     constructor(scene, newLine){
 
+        this.state = this.PlayerState.STOPED;
+        this.prevState = this.PlayerState.RUNNING;
         this.currScene = scene;
         this.accelerationRate = 0.01;
         this.gravity = 10;
@@ -68,32 +79,39 @@ class Player {
 
     customUpdate(inputs){
 
+        console.clear();
+        console.log(this.prevState);
+        console.log("______");
+        console.log(this.state);
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.accelerationRate * 0.1;
 
         if(this.currentHeat == 1){
             //TODO Implement "Crash"
+
+            this.state = this.PlayerState.CRASHED;
         }
 
         if (inputs.A_Key.isDown){ 
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
-        
+            this.state = this.PlayerState.RUNNING;
             if (this.currentHeat < 0.5) {
                 this.currentHeat += this.accelerationRate/2;
             }
-            console.clear();
-            console.log(this.currentHeat);
         }
         else if(inputs.B_Key.isDown){
+            this.state = this.PlayerState.RUNNING_BOOST;
             this.speedX += this.accelerationRate;
             this.maxSpeedX = this.maxSpeedXBoost;
             if(this.currentHeat < 1) this.currentHeat += this.accelerationRate/2;
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
+            this.state = this.PlayerState.SLOWING_DOWN;
         }
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
             this.speedX = 0;
+            this.state = this.PlayerState.STOPED;
             this.sprite.setTexture('pilotStanding');
         }
         else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
@@ -305,7 +323,34 @@ class Player {
 
     soundsManager(){
 
-        if(this.isOn)
+        if(this.prevState != this.state){ // Just switched state
+            this.soundsTable['acc_normal'].stop();
+            this.soundsTable['acc_boost'].stop();
+            this.soundsTable['acc_reduced'].stop();
+            this.soundsTable['acc_none'].stop();
+            this.soundsTable['crash'].stop();
+            switch(this.state){
+                case this.PlayerState.STOPED:
+                    this.soundsTable['acc_none'].play();
+                    break;
+                case this.PlayerState.RUNNING:
+                    this.soundsTable['acc_normal'].play();
+                    break;
+                case this.PlayerState.SLOWING_DOWN:
+                    this.soundsTable['acc_reduced'].play();
+                    break;
+                case this.PlayerState.CRASHED:
+                    this.soundsTable['crash'].play();
+                    break;
+                case this.PlayerState.RUNNING_BOOST:
+                    this.soundsTable['acc_boost'].play();
+                    break;
+                case this.PlayerState.REDUCED_SPEED:
+                    this.soundsTable['acc_reduced'].play();
+                    break;
+            }
+            this.prevState = this.state;
+        }
 
     }
 

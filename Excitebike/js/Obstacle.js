@@ -141,9 +141,6 @@ class Obstacle {
             case "ramp":
                 if(x_player >= this.x && x_player <= this.halfPoint&&
                     y_player >= y_expected - this.maxHeight) {
-                        console.log("___");
-                        console.log(y_player);
-                        console.log(y_expected + this.maxHeight);
                     player.rampActivate();
                 }
                 else{

@@ -54,9 +54,7 @@ class GamePlay extends Phaser.Scene{
         this.pilot = new Player(this, 1);
         
         this.pilotMapPosition = this.pilot.sprite.x;
-
         this.inputs = new InputManager(this);
-
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
 
@@ -119,6 +117,8 @@ class GamePlay extends Phaser.Scene{
             this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
             this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         } 
+
+        this.pilot.soundsManager();
     }
     
     isInside(positionX, _obstacle)
