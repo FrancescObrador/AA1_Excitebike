@@ -106,7 +106,7 @@ class GamePlay extends Phaser.Scene{
             this.timer += customDeltaTime;
             this.pilot.customUpdate(this.inputs);
             for(var i = 0; i< this.enemies.length;i++){
-                his.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
+                this.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
             }
             this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     
@@ -120,22 +120,22 @@ class GamePlay extends Phaser.Scene{
                 this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
                 this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         
-        this.obstacles.forEach(obstacle => {
-            var playerPos = Math.trunc(this.pilotMapPosition);
-            if(this.isInside(playerPos, obstacle) ){
-                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
-            }
-            for(var i = 0; i< this.enemies.length;i++){
-                var enemyPos = Math.trunc(this.enemies[i].mapPosition);
-                if(this.isInside(enemyPos, obstacle) ){
-                    obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+            this.obstacles.forEach(obstacle => {
+                var playerPos = Math.trunc(this.pilotMapPosition);
+                if(this.isInside(playerPos, obstacle) ){
+                    obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
                 }
-            }
-        });
+                for(var i = 0; i< this.enemies.length;i++){
+                    var enemyPos = Math.trunc(this.enemies[i].mapPosition);
+                    if(this.isInside(enemyPos, obstacle) ){
+                        obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                    }
+                }
+            });
         
             this.timerManager();
         }
-
+    }
 
     }
     
