@@ -79,169 +79,187 @@ class Enemy {
 
         var aux = playerX - this.mapPosition;
         this.sprite.x = this.linesX[1] - aux;
-        this.PressA = true;
-        // Crash Handle
-        if(this.isOnCrash) {
-            this.handleCrash();
-            return;
+
+        if(this.sprite.x <= -50){
+
+            this.mapPosition += config.width + this.rnd.between(100,120);
+            this.maxSpeedXNormalBase = this.rnd.between(190,210);
+
+            this.isOnAir = false;
+            this.isFalling = false;
+            this.isOnRamp = false;
+
+            this.yPos = this.minY;
+            this.sprite.y = this.minY;
         }
 
-        if (this.PressA){ 
-            this.maxSpeedX = this.maxSpeedXNormal;   
-            this.speedX += this.accelerationRate;
-        
-           
-        }
-        else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
-        }
-        
-        if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
-        
-        if(this.isSpeedReduced){
-            this.maxSpeedX = this.maxSpeedXReduced;
-        }
-        
-        if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
-            this.speedX = 0;
-            this.sprite.setTexture('enemy_pilotStanding');
-        }
-        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = this.maxSpeedX;
-            
-        }
-        this.mapPosition += this.speedX * dt; 
+        if(this.isActive){
 
-        //Y velocity
-        if(this.isFalling){ //jugador esta caient
-            
-
-            if(this.isOnRamp == true){
-                this.sprite.body.velocity.y += (this.gravity);
-
-                if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
-                    this.sprite.body.velocity.y = 0;
-                    this.sprite.y = this.lines[this.currentLine]  - this.minY;
-                }
+        
+            this.PressA = true;
+            // Crash Handle
+            if(this.isOnCrash) {
+                this.handleCrash();
+                return;
             }
-            else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
-                this.sprite.body.velocity.y = 0;
-                this.sprite.y = this.lines[this.currentLine];
-                this.isFalling = false;
-                this.isOnAir = false;
-                this.tiltCounter = 0;
 
-                if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
+            if (this.PressA){ 
+                this.maxSpeedX = this.maxSpeedXNormal;   
+                this.speedX += this.accelerationRate; 
+            
+            
+            }
+            else if(this.speedX > 0) {
+                this.speedX -= this.accelerationRate;
+            }
+            
+            if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
+            
+            if(this.isSpeedReduced){
+                this.maxSpeedX = this.maxSpeedXReduced;
+            }
+            
+            if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
+                this.speedX = 0;
+                this.sprite.setTexture('enemy_pilotStanding');
+            }
+            else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+                this.speedX = this.maxSpeedX;
+                
+            }
+            this.mapPosition += this.speedX * dt; 
 
-                    this.frontTiltCounter = -1;
-                    this.wheeliesTiltCounter = -1;
-                    this.wheeliesCounter = -1;
-                    
-                    // var aux = this.lines[this.currentLine] - this.minY - this.yPos;
-                    // if(aux < 0){
-                    //     aux *= -1;
-                    // }
-                    // if(aux <= this.isOnRampError){
-                    //     console.log("alive");
-                    // }
-                    // else{
-                    //     console.log("crashed");
-                    //     this.isOnCrash;
-                    // }
-                    
+            //Y velocity
+            if(this.isFalling){ //jugador esta caient
+                
+
+                if(this.isOnRamp == true){
+                    this.sprite.body.velocity.y += (this.gravity);
+
+                    if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
+                        this.sprite.body.velocity.y = 0;
+                        this.sprite.y = this.lines[this.currentLine]  - this.minY;
+                    }
                 }
+                else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
+                    this.sprite.body.velocity.y = 0;
+                    this.sprite.y = this.lines[this.currentLine];
+                    this.isFalling = false;
+                    this.isOnAir = false;
+                    this.tiltCounter = 0;
 
-                else if(this.wheeliesTiltCounter >= 0){ //si esta fent wheelies reduim velocitat (cal revisar valors)
-                    if(this.wheeliesTiltCounter >= 4){
-                        if(this.speedX > this.maxSpeedXBoost){
-                            this.speedX *= 0.3;
-                        }
-                        else{
-                            this.speedX *= 0.4;
-                        }
+                    if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
+
+                        this.frontTiltCounter = -1;
+                        this.wheeliesTiltCounter = -1;
+                        this.wheeliesCounter = -1;
+                        
+                        // var aux = this.lines[this.currentLine] - this.minY - this.yPos;
+                        // if(aux < 0){
+                        //     aux *= -1;
+                        // }
+                        // if(aux <= this.isOnRampError){
+                        //     console.log("alive");
+                        // }
+                        // else{
+                        //     console.log("crashed");
+                        //     this.isOnCrash;
+                        // }
                         
                     }
-                    else if(this.wheeliesTiltCounter >= 2){
-                        if(this.speedX > this.maxSpeedXBoost){
-                            this.speedX *= 0.5;
+
+                    else if(this.wheeliesTiltCounter >= 0){ //si esta fent wheelies reduim velocitat (cal revisar valors)
+                        if(this.wheeliesTiltCounter >= 4){
+                            if(this.speedX > this.maxSpeedXBoost){
+                                this.speedX *= 0.3;
+                            }
+                            else{
+                                this.speedX *= 0.4;
+                            }
+                            
                         }
-                        else{
-                            this.speedX *= 0.6;
+                        else if(this.wheeliesTiltCounter >= 2){
+                            if(this.speedX > this.maxSpeedXBoost){
+                                this.speedX *= 0.5;
+                            }
+                            else{
+                                this.speedX *= 0.6;
+                            }
+                            
                         }
-                        
+                        else if(this.wheeliesTiltCounter >= 0){
+                            if(this.speedX > this.maxSpeedXBoost){
+                                this.speedX *= 0.8;
+                            }
+                            else{
+                                this.speedX *= 0.9;
+                            }
+                        }
+                        this.wheeliesCounter = this.wheeliesTiltCounter;
                     }
-                    else if(this.wheeliesTiltCounter >= 0){
-                        if(this.speedX > this.maxSpeedXBoost){
-                            this.speedX *= 0.8;
-                        }
-                        else{
-                            this.speedX *= 0.9;
-                        }
+                    else{
+                        this.frontTiltCounter = -1;
+                        this.wheeliesTiltCounter = -1;
+                        this.wheeliesCounter = -1;
                     }
-                    this.wheeliesCounter = this.wheeliesTiltCounter;
+                
+                    
+
                 }
                 else{
-                    this.frontTiltCounter = -1;
-                    this.wheeliesTiltCounter = -1;
-                    this.wheeliesCounter = -1;
+                    this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
                 }
-               
-                
 
+                
+                if(this.frontTiltCounter >= 0){
+                    this.sprite.setTexture('enemy_pilot_front_tilt_' + this.frontTiltCounter);
+                }
+                else if(this.wheeliesTiltCounter >= 0){
+                    this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
+                }
+                    
             }
-            else{
-                this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
+            else if(this.isOnAir){
+                if(this.wheeliesTiltCounter >= 0){
+                    this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
+                }
             }
+            else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
+                if(!this.isTurning) { //sino estem cambiant de carril
+                    
+                    
+                    if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
+                    else {this.isOnWheelies = false;}
 
-            
-            if(this.frontTiltCounter >= 0){
-                this.sprite.setTexture('enemy_pilot_front_tilt_' + this.frontTiltCounter);
-            }
-            else if(this.wheeliesTiltCounter >= 0){
-                this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
-            }
-                
-        }
-        else if(this.isOnAir){
-            if(this.wheeliesTiltCounter >= 0){
-                this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesTiltCounter);
-            }
-        }
-        else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
-            if(!this.isTurning) { //sino estem cambiant de carril
-                
-                
-                if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
-                else {this.isOnWheelies = false;}
+                    if(this.isOnWheelies){
+                        this.tiltCounter++; 
+                        if(this.tiltCounter > 4){
+                            this.tiltCounter = 0;
+                            this.wheeliesCounter--;
+                        }
+                        
 
-                if(this.isOnWheelies){
-                    this.tiltCounter++; 
-                    if(this.tiltCounter > 4){
-                        this.tiltCounter = 0;
-                        this.wheeliesCounter--;
+                        if(this.wheeliesCounter >= 0){
+                            this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
+                        }
                     }
                     
-
-                    if(this.wheeliesCounter >= 0){
-                        this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
-                    }
                 }
                 
+
             }
+
+            //FIX THIS SHIT - o potser no eh
+            if(!this.isOnAir && !this.isTurning){
+                this.sprite.y = this.lines[this.currentLine];
             
-
+            }
+            // NO eliminar
+            this.yPos = this.sprite.y;
+            this.expectedLine = this.lines[this.currentLine];
+            this.isSpeedReduced = false;
+            this.isOnRamp = false;
         }
-
-        //FIX THIS SHIT - o potser no eh
-        if(!this.isOnAir && !this.isTurning){
-            this.sprite.y = this.lines[this.currentLine];
-         
-        }
-        // NO eliminar
-        this.yPos = this.sprite.y;
-        this.expectedLine = this.lines[this.currentLine];
-        this.isSpeedReduced = false;
-        this.isOnRamp = false;
     }
 
     rampActivate(strength){
