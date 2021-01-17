@@ -8,18 +8,20 @@ class Obstacle {
         this.width = 0;
         this.height = 0;
         this.maxHeight = 0;
+        this.midPartSize = 8;
         this.currentLane = lane;
-
+        
         this.isLap1 = false;
         this.isLap2 = false;
         this.isFinish = false;
-
+        
         this.isAllLane = true;
-
+        this.obstSubType = subType;
+        
         var laneSize = 12;
         var allLanesSize = 48;
 
-        switch(subType){
+        switch(this.obstSubType){
             case "mud":
                 this.width = 24;
                 this.isAllLane = false;
@@ -34,11 +36,12 @@ class Obstacle {
                 break;
 
             case "miniRamp":
-                this.width = 16;
+                this.width = 32;
                 this.isAllLane = false;
-                this.height = laneSize *2;
-                this.halfPoint = 16;
-                this.halfPoint = 15;
+                this.height = laneSize;
+                this.maxHeight = 15;
+                this.halfPoint = 16; 
+                this.midPartSize = 0;
                 break;
 
             case "smallRamp":
@@ -46,12 +49,13 @@ class Obstacle {
                 this.height = allLanesSize;
                 this.halfPoint = 19;
                 this.maxHeight = 18;
+                
                 break;
             case "bigRamp":
                 this.width = 72;
                 this.height = allLanesSize;
-                this.halfPoint = this.width/2;
-                this.maxHeight = 34;
+                this.halfPoint = 32;
+                this.maxHeight = 32;
                 break;
             case "bigLeftRamp":
                 this.width = 44;
@@ -68,7 +72,7 @@ class Obstacle {
             case "longRamp":
                 this.width = 72;
                 this.height = allLanesSize;
-                this.halfPoint = 36;
+                this.halfPoint = 32;
                 this.maxHeight = 17;
                 break;
             case "smallBump":
@@ -86,22 +90,25 @@ class Obstacle {
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isLap1 = true;
-                 this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
-                this.maxHeight = 32;
+                this.halfPoint = 25; 
+                this.midPartSize = 48;
+                this.maxHeight = 25;
                 break; 
             case "lapTwo":
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isLap2 = true;
-                 this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
-                this.maxHeight = 32;
+                this.halfPoint = 25; 
+                this.midPartSize = 48;
+                this.maxHeight = 25;
                 break; 
             case "finish":
                 this.width = 96;
                 this.height = allLanesSize;
                 this.isFinish = true;
-                this.halfPoint = 47; // TODO -> Pensar si bajarlo a 25
-                this.maxHeight = 32;
+                this.halfPoint = 25; 
+                this.midPartSize = 48;
+                this.maxHeight = 25;
                 break;
             default:
                 break;
@@ -132,19 +139,51 @@ class Obstacle {
         scene.add.existing(this);
     }  
 
-    actOnPlayer(player,x_player, y_player, y_expected){
+    actOnPlayer(player,x_player, y_player, y_expected, index){
         switch(this.type){
             case "tramp":
+                player.isSpeedReduced = true;
                 break;
             case "booster":
+                player.currentHeat = 0;
                 break;
             case "ramp":
-                if(x_player >= this.x && x_player <= this.halfPoint&&
-                    y_player >= y_expected - this.maxHeight) {
-                    player.rampActivate();
+                if(x_player >= this.x && x_player < this.halfPoint) {
+                    if( y_player >= y_expected - this.maxHeight){
+                        let catete_H = this.halfPoint - this.x;
+                        let catete_V = this.maxHeight;
+                        let angle = 0;
+                        if(catete_H != 0){
+                            angle = Math.atan(catete_V / catete_H);
+                        }
+                        player.rampActivate(angle);
+                    }else{
+                        if(this.subType == "miniRamp"){
+                            player.rampDeactivate(0);
+                        }else{
+                            player.rampDeactivate(this.maxHeight);
+                        }
+                    }
+                }
+                else if(this.subType == "miniRamp"){
+                    console.log("HE");
+                    player.rampDeactivate(0);
+                }
+                else if(x_player >= this.halfPoint && (x_player <= this.halfPoint + this.midPartSize)){
+                    player.rampDeactivate(this.maxHeight);
                 }
                 else{
-                    player.rampDeactivate();
+                    let catete_V = this.maxHeight;
+                    let catete_H = this.end - this.halfPoint - this.midPartSize; 
+                    let playerDist = this.end - x_player;
+                    if(playerDist > 0){
+                        let ratio = playerDist / catete_H;
+                        catete_V *= ratio;
+                    }else{
+                        catete_V = 0
+                    }
+
+                    player.rampDeactivate(catete_V); 
                 }
                 
                 break;

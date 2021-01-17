@@ -70,34 +70,39 @@ class GamePlay extends Phaser.Scene{
         // HUD
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
+        this.overheatText = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "OVERHEATH", 10).setOrigin(0.5); 
+        this.overheatText.visible = false; 
+        this.isGoLaunched = false; 
+
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     }
 
     update(){
+        customDeltaTime = 1.0 / juego.loop.actualFps;
+        
 
         this.pilot.customUpdate(this.inputs);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+
+        this.OverHeatTextHandler(); 
 
         if(this.pilotMapPosition >= this.goal.end)  // finish reached
         {
             this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
             this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
         } else {
-            this.backGround.x -= this.pilot.speedX;     // container scroll  
-            this.pilotMapPosition += this.pilot.speedX; // "real" pilot position
+            this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
+            this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         }
         
         this.obstacles.forEach(obstacle => {
-           var playerPos = Math.trunc(this.pilotMapPosition);
+        var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
-               if(obstacle.type == "booster"){
-                   this.pilot.currentHeat = 0;
-               }
-                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine);
+                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
             }
         });
-       
+    
         //TIMER - sets the 3 variables in seconds - float
         this.timer = (this.game.getTime()/1000)- this.startTime;
         this.hudTimer.text = this.convertToTime(this.timer);
@@ -124,6 +129,10 @@ class GamePlay extends Phaser.Scene{
     isInside(positionX, _obstacle)
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
+            if(_obstacle.obstSubType == "miniRamp"){
+                if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1 ||this.pilot.currentLine == _obstacle.currentLane + 2 ) 
+                return true;
+            }
             if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
             return true;
         }
@@ -181,7 +190,20 @@ class GamePlay extends Phaser.Scene{
 	setBarValue(bar, value){
 		 //scale the bar
 		 bar.scaleX = value;
-	}
+    }
+    
+    OverHeatTextHandler() { 
+        if(this.pilot.isOverHeated){ 
+            this.overheatText.visible = !!(parseInt(((this.timer%1)*10)%2)); // this returns alternatively true or fasle every 0.1 seconds 
+            if (!this.isGoLaunched) { 
+                this.isGoLaunched = true; 
+                this.time.delayedCall(2700, ()=> {this.overheatText.text = "GO"; this.isGoLaunched = false;}, [], this); 
+            } 
+        } else{ 
+            this.overheatText.visible = this.pilot.isOverHeated; 
+        } 
+    } 
+ 
 
 }
 
