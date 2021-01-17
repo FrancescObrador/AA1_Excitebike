@@ -46,7 +46,7 @@ class Enemy {
         this.mapPosition = this.linesX[this.currentLine];
         this.isActive = true;
         this.rnd = new Phaser.Math.RandomDataGenerator(config.seed);
-        this.maxSpeedXNormalBase = this.rnd.between(190,210);
+        this.maxSpeedXNormalBase = this.rnd.between(190,210); //velocitat base random
     } 
 
     static loadAssets(scene){
@@ -75,14 +75,13 @@ class Enemy {
 
     customUpdate(playerX,playerVX,dt){
 
-        this.maxSpeedXNormal = this.rnd.between(this.maxSpeedXNormalBase-10,this.maxSpeedXNormalBase+10);
+        this.maxSpeedXNormal = this.rnd.between(this.maxSpeedXNormalBase-10,this.maxSpeedXNormalBase+10); //velocitat base + increment random
 
-        var aux = playerX - this.mapPosition;
-        this.sprite.x = this.linesX[1] - aux;
+        this.sprite.x = this.linesX[1] - (playerX - this.mapPosition); //ajustar la seva posicio en pantalla per cuadrar amb visio del player
 
-        if(this.sprite.x <= -50){
+        if(this.sprite.x <= -100){
 
-            this.mapPosition += config.width + this.rnd.between(100,120);
+            this.mapPosition += (config.width + 200);
             this.maxSpeedXNormalBase = this.rnd.between(190,210);
 
             this.isOnAir = false;
@@ -92,6 +91,20 @@ class Enemy {
             this.yPos = this.minY;
             this.sprite.y = this.minY;
         }
+        else if(this.sprite.x >= config.width + 100){
+
+            this.mapPosition -= (config.width + 200);
+            this.maxSpeedXNormalBase = this.rnd.between(190,210);
+
+            this.isOnAir = false;
+            this.isFalling = false;
+            this.isOnRamp = false;
+
+            this.yPos = this.minY;
+            this.sprite.y = this.minY;
+        }
+        
+
 
         if(this.isActive){
 
