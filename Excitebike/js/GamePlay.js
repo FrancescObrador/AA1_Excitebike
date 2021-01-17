@@ -64,6 +64,8 @@ class GamePlay extends Phaser.Scene{
         //this.enemy = new Enemy(this, 0);
         this.enemies = [];
         this.enemies.push(new Enemy(this, 0));
+        this.enemies.push(new Enemy(this, 2));
+        this.enemies.push(new Enemy(this, 3));
 
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
@@ -96,7 +98,7 @@ class GamePlay extends Phaser.Scene{
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
 
         for(var i = 0; i< this.enemies.length;i++){
-            this.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX);
+            this.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
         }
         
 
@@ -113,9 +115,15 @@ class GamePlay extends Phaser.Scene{
         }
         
         this.obstacles.forEach(obstacle => {
-        var playerPos = Math.trunc(this.pilotMapPosition);
+            var playerPos = Math.trunc(this.pilotMapPosition);
             if(this.isInside(playerPos, obstacle) ){
                 obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
+            }
+            for(var i = 0; i< this.enemies.length;i++){
+                var enemyPos = Math.trunc(this.enemies[i].mapPosition);
+                if(this.isInside(enemyPos, obstacle) ){
+                    obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                }
             }
         });
     

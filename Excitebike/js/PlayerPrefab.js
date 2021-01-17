@@ -174,7 +174,7 @@ class Player {
                         }
                         
                     }
-                    else if(this.wheeliesTiltCounter >= 1){
+                    else if(this.wheeliesTiltCounter >= 0){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
@@ -270,7 +270,7 @@ class Player {
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
                 else {this.isOnWheelies = false;}
 
-                if(this.speedX >= (this.maxSpeedX * 0.75)){
+                if(this.speedX >= (this.maxSpeedX * 0.9)){
                     if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                         this.tiltCounter = 0;
                     }

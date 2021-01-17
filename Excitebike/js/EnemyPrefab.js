@@ -43,6 +43,7 @@ class Enemy {
         this.PressB = false;
         this.PressForward = false;
         this.mapPosition = this.linesX[this.currentLine];
+        this.isActive = true;
     } 
 
     static loadAssets(scene){
@@ -69,11 +70,11 @@ class Enemy {
 
     }
 
-    customUpdate(playerX,playerVX){
+    customUpdate(playerX,playerVX,dt){
 
         var aux = playerX - this.mapPosition;
         this.sprite.x = this.linesX[1] - aux;
-
+        this.PressA = true;
         // Crash Handle
         if(this.isOnCrash) {
             this.handleCrash();
@@ -109,6 +110,7 @@ class Enemy {
             this.speedX = this.maxSpeedX;
             
         }
+        this.mapPosition += this.speedX * dt; 
 
         //Y velocity
         if(this.isFalling){ //jugador esta caient
@@ -168,7 +170,7 @@ class Enemy {
                         }
                         
                     }
-                    else{
+                    else if(this.wheeliesTiltCounter >= 0){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
@@ -264,7 +266,7 @@ class Enemy {
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
                 else {this.isOnWheelies = false;}
 
-                if(this.speedX >= (this.maxSpeedX * 0.75)){
+                if(this.speedX >= (this.maxSpeedX * 0.9)){
                     // if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                     //     this.tiltCounter = 0;
                     // }

@@ -138,7 +138,58 @@ class Obstacle {
 
         scene.add.existing(this);
     }  
+    actOnEnemy(enemy,x_enemy, y_enemy, y_expected, index){
+        switch(this.type){
+            case "tramp":
+                enemy.isSpeedReduced = true;
+                break;
+            case "booster":
+                //enemy.currentHeat = 0;
+                break;
+            case "ramp":
+                if(x_enemy >= this.x && x_enemy < this.halfPoint) {
+                    if( y_enemy >= y_expected - this.maxHeight){
+                        let catete_H = this.halfPoint - this.x;
+                        let catete_V = this.maxHeight;
+                        let angle = 0;
+                        if(catete_H != 0){
+                            angle = Math.atan(catete_V / catete_H);
+                        }
+                        enemy.rampActivate(angle);
+                    }else{
+                        if(this.subType == "miniRamp"){
+                            enemy.rampDeactivate(0);
+                        }else{
+                            enemy.rampDeactivate(this.maxHeight);
+                        }
+                    }
+                }
+                else if(this.subType == "miniRamp"){
+                    console.log("HE");
+                    enemy.rampDeactivate(0);
+                }
+                else if(x_enemy >= this.halfPoint && (x_enemy <= this.halfPoint + this.midPartSize)){
+                    enemy.rampDeactivate(this.maxHeight);
+                }
+                else{
+                    let catete_V = this.maxHeight;
+                    let catete_H = this.end - this.halfPoint - this.midPartSize; 
+                    let playerDist = this.end - x_enemy;
+                    if(playerDist > 0){
+                        let ratio = playerDist / catete_H;
+                        catete_V *= ratio;
+                    }else{
+                        catete_V = 0
+                    }
 
+                    enemy.rampDeactivate(catete_V); 
+                }
+                
+                break;
+            default:
+                break;
+        }
+    }
     actOnPlayer(player,x_player, y_player, y_expected, index){
         switch(this.type){
             case "tramp":
