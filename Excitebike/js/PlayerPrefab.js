@@ -44,6 +44,7 @@ class Player {
         this.currentHeat = this.baseHeat;    
         
         this.lastTiltFront = false;
+        this.justLanded = false;
     } 
 
     static loadAssets(scene){
@@ -136,6 +137,7 @@ class Player {
                 this.isFalling = false;
                 this.isOnAir = false;
                 this.tiltCounter = 0;
+                this.justLanded = true;
 
                 if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
 
@@ -176,12 +178,12 @@ class Player {
                         }
                         
                     }
-                    else if(this.wheeliesTiltCounter >= 0){
+                    else if(this.wheeliesTiltCounter >= 1){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
                         else{
-                            this.speedX *= 0.875;
+                            this.speedX *= 0.9;
                         }
                     }
                     this.wheeliesCounter = this.wheeliesTiltCounter;
@@ -277,9 +279,12 @@ class Player {
                 }
                 //WHEELIES
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
-                else {this.isOnWheelies = false;}
+                else {
+                    this.isOnWheelies = false;
+                    this.justLanded = false;
+                }
 
-                if(this.speedX >= (this.maxSpeedX * 0.95)){
+                if(this.speedX >= (this.maxSpeedX * 0.95) && !this.justLanded){
                     if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                         this.tiltCounter = 0;
                     }
