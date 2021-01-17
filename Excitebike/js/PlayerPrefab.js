@@ -92,10 +92,6 @@ class Player {
 
     customUpdate(inputs){
 
-        console.clear();
-        console.log(this.prevState);
-        console.log("______");
-        console.log(this.state);
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
         if(this.currentHeat == 1){
@@ -126,7 +122,6 @@ class Player {
                 this.currentHeat += this.overheatRate * customDeltaTime;
             }
         }
-        
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
             this.state = this.PlayerState.SLOWING_DOWN;
@@ -136,6 +131,7 @@ class Player {
         
         if(this.isSpeedReduced){
             this.maxSpeedX = this.maxSpeedXReduced;
+            this.state = this.PlayerState.REDUCED_SPEED;
         }
         
         if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
@@ -145,22 +141,39 @@ class Player {
         }
         else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
             this.speedX = this.maxSpeedX;
-            
         }
-
+        
         //Y velocity
         if(this.isFalling){ //jugador esta caient
-            
-
             if(this.isOnRamp == true){
                 this.sprite.body.velocity.y += (this.gravity);
-
                 if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
+                    
+                    if(this.sprite.body.velocity.y >= 50.0){
+                        if(this.sprite.body.velocity.y <= 200.0){
+                            this.soundsTable['jump_normal'].play();
+                            console.log("Normal");
+                        } else{
+                            this.soundsTable['jump_super'].play();
+                            console.log("super");
+                        }
+                    }
                     this.sprite.body.velocity.y = 0;
                     this.sprite.y = this.lines[this.currentLine]  - this.minY;
                 }
             }
             else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
+                
+                if(this.sprite.body.velocity.y >= 50.0){
+                    if(this.sprite.body.velocity.y <= 200.0){
+                        this.soundsTable['jump_normal'].play();
+                        console.log("Normal");
+                    } else{
+                        this.soundsTable['jump_super'].play();
+                        console.log("super");
+                    }
+                }
+
                 this.sprite.body.velocity.y = 0;
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
@@ -186,7 +199,6 @@ class Player {
                     }
                     
                 }
-
                 else if(this.wheeliesTiltCounter >= 0){ //si esta fent wheelies reduim velocitat (cal revisar valors)
                     if(this.wheeliesTiltCounter >= 4){
                         if(this.speedX > this.maxSpeedXBoost){
@@ -194,8 +206,7 @@ class Player {
                         }
                         else{
                             this.speedX *= 0.4;
-                        }
-                        
+                        } 
                     }
                     else if(this.wheeliesTiltCounter >= 2){
                         if(this.speedX > this.maxSpeedXBoost){
@@ -204,7 +215,6 @@ class Player {
                         else{
                             this.speedX *= 0.6;
                         }
-                        
                     }
                     else{
                         if(this.speedX > this.maxSpeedXBoost){
@@ -221,9 +231,6 @@ class Player {
                     this.wheeliesTiltCounter = -1;
                     this.wheeliesCounter = -1;
                 }
-               
-                
-
             }
             else{
                 this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
@@ -254,7 +261,6 @@ class Player {
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
 
-
                     if(this.frontTiltCounter <0){ //si no esta fent front tilt
                         this.wheeliesTiltCounter++;
                         if(this.wheeliesTiltCounter > 5){
@@ -272,8 +278,7 @@ class Player {
             }
             else if(this.wheeliesTiltCounter >= 0){
                 this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
-            }
-                
+            }    
         }
         else if(this.isOnAir){
             if(this.wheeliesTiltCounter >= 0){
@@ -365,18 +370,12 @@ class Player {
                     
                 }
                 //aqui podrem fer una iteracio quan acabi el gir
-                if(!this.isTurning){
-                    
+                if(!this.isTurning){      
                 }
-                
             }
-
         }
-
-        //FIX THIS SHIT - o potser no eh
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
-         
         }
         // NO eliminar
         this.yPos = this.sprite.y;

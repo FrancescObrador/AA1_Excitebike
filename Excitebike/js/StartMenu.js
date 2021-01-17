@@ -18,10 +18,16 @@ class StartMenu extends Phaser.Scene{
 		this.load.image('designScreen', ruta + "designScreen.png" )
 
 		this.load.image('cursor', ruta + "cursor.png");
+
+
+		ruta = 'assets/sounds/';
+        this.load.audio('cursor_move', ruta + 'move_cursor.wav');
 	}
 
 	create(){
 
+		this.soundsTable = {};
+        this.soundsTable['cursor'] = juego.sound.add('cursor_move');
 		// Setup inputs
 		this.inputs = new InputManager(this);
 		this.inputs.Up_Key.on('up', this.CursorUp, this);
@@ -46,6 +52,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		
 		console.log("loading start screen");
+		
 		this.menu = this.add.image(0, 0, 'initialScreen').setScale(0.25).setOrigin(0);
 		
 		this.cursorPositions =  [128, 144, 160]; // no tocar
@@ -64,6 +71,7 @@ class StartMenu extends Phaser.Scene{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == 0 || this.cursorState == 1){
 				console.log("loading tracks screen");
+
 				this.menu = this.add.image(0, 0, 'tracksScreen').setOrigin(0);
 				
 				this.cursorPositions = [72, 96 ,120, 144, 168]; // no tocar
@@ -92,7 +100,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == 0) return;
-		
+			this.soundsTable['cursor'].play();
 			this.cursorState -= 1;
 			this.cursor.y = this.cursorPositions[this.cursorState];
 		}
@@ -102,7 +110,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == this.cursorPositions.length -1) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState +=1;
 			this.cursor.y = this.cursorPositions[this.cursorState];
 		}
@@ -112,7 +120,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.TRACKS){
 			if(this.cursorState == this.cursorPositions.length -1) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState +=1;
 			this.cursor.x = this.cursorPositions[this.cursorState];
 		}
@@ -122,7 +130,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.TRACKS){
 			if(this.cursorState == 0) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState -= 1;
 			this.cursor.x = this.cursorPositions[this.cursorState];
 		}
