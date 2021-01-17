@@ -41,7 +41,9 @@ class Player {
         this.yPos = this.sprite.y;
         
         this.baseHeat = 0.25;
-        this.currentHeat = this.baseHeat;       
+        this.currentHeat = this.baseHeat;    
+        
+        this.lastTiltFront = false;
     } 
 
     static loadAssets(scene){
@@ -179,7 +181,7 @@ class Player {
                             this.speedX *= 0.8;
                         }
                         else{
-                            this.speedX *= 0.9;
+                            this.speedX *= 0.875;
                         }
                     }
                     this.wheeliesCounter = this.wheeliesTiltCounter;
@@ -201,6 +203,8 @@ class Player {
                 this.tiltCounter = 0;
             }
             else if(inputs.Right_Key.isDown){ //si apretem dreta
+                if(!this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = true;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -218,6 +222,8 @@ class Player {
                 }
             }
             else if(inputs.Left_Key.isDown){ //si apretem esquerra
+                if(this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = false;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -240,6 +246,9 @@ class Player {
             }
             else if(this.wheeliesTiltCounter >= 0){
                 this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
+            }
+            else{
+                //console.log("standing");
             }
                 
         }
@@ -270,7 +279,7 @@ class Player {
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
                 else {this.isOnWheelies = false;}
 
-                if(this.speedX >= (this.maxSpeedX * 0.9)){
+                if(this.speedX >= (this.maxSpeedX * 0.95)){
                     if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                         this.tiltCounter = 0;
                     }

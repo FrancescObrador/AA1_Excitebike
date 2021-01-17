@@ -1,3 +1,4 @@
+
 class Enemy {
     static animsCreated = false;
 
@@ -44,6 +45,8 @@ class Enemy {
         this.PressForward = false;
         this.mapPosition = this.linesX[this.currentLine];
         this.isActive = true;
+        this.rnd = new Phaser.Math.RandomDataGenerator(config.seed);
+        this.maxSpeedXNormalBase = this.rnd.between(190,210);
     } 
 
     static loadAssets(scene){
@@ -72,6 +75,8 @@ class Enemy {
 
     customUpdate(playerX,playerVX,dt){
 
+        this.maxSpeedXNormal = this.rnd.between(this.maxSpeedXNormalBase-10,this.maxSpeedXNormalBase+10);
+
         var aux = playerX - this.mapPosition;
         this.sprite.x = this.linesX[1] - aux;
         this.PressA = true;
@@ -86,11 +91,6 @@ class Enemy {
             this.speedX += this.accelerationRate;
         
            
-        }
-        else if(this.PressB){
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
@@ -137,17 +137,17 @@ class Enemy {
                     this.wheeliesTiltCounter = -1;
                     this.wheeliesCounter = -1;
                     
-                    var aux = this.lines[this.currentLine] - this.minY - this.yPos;
-                    if(aux < 0){
-                        aux *= -1;
-                    }
-                    if(aux <= this.isOnRampError){
-                        console.log("alive");
-                    }
-                    else{
-                        console.log("crashed");
-                        this.isOnCrash;
-                    }
+                    // var aux = this.lines[this.currentLine] - this.minY - this.yPos;
+                    // if(aux < 0){
+                    //     aux *= -1;
+                    // }
+                    // if(aux <= this.isOnRampError){
+                    //     console.log("alive");
+                    // }
+                    // else{
+                    //     console.log("crashed");
+                    //     this.isOnCrash;
+                    // }
                     
                 }
 
@@ -193,44 +193,7 @@ class Enemy {
                 this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
             }
 
-            // if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
-            //     this.tiltCounter = 0;
-            // }
-            if(this.PressForward){ //si apretem dreta
-                this.tiltCounter++;
-                if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                    this.tiltCounter = 0;
-
-                    if(this.wheeliesTiltCounter < 0){ //si no esta fent wheelies
-                        this.frontTiltCounter++;
-                        if(this.frontTiltCounter > 3){
-                            this.frontTiltCounter = 3;
-                        }
-                    }
-                    this.wheeliesTiltCounter--;
-                    if(this.wheeliesTiltCounter < -1){
-                        this.wheeliesTiltCounter = -1;
-                    }
-                }
-            }
-            // else if(inputs.Left_Key.isDown){ //si apretem esquerra
-            //     this.tiltCounter++;
-            //     if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-            //         this.tiltCounter = 0;
-
-
-            //         if(this.frontTiltCounter <0){ //si no esta fent front tilt
-            //             this.wheeliesTiltCounter++;
-            //             if(this.wheeliesTiltCounter > 5){
-            //                 this.wheeliesTiltCounter = 5;
-            //             }
-            //         }
-            //         this.frontTiltCounter--;
-            //         if(this.frontTiltCounter < -1){
-            //             this.frontTiltCounter = -1;
-            //         }
-            //     }
-            // }
+            
             if(this.frontTiltCounter >= 0){
                 this.sprite.setTexture('enemy_pilot_front_tilt_' + this.frontTiltCounter);
             }
@@ -247,56 +210,11 @@ class Enemy {
         else if(!this.isOnAir){ //sino esta al aire (aire comença quan pujem la rampa)
             if(!this.isTurning) { //sino estem cambiant de carril
                 
-                if(this.wheeliesCounter < 0){ //sino esta fent wheelies
-                    // if(inputs.Up_Key.isDown && this.currentLine < this.lines.length-1){ //si volem cambiar de carril i es viable - Esquerra
-                    //     this.currentLine++;
-                    //     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                    //     this.isTurning = true;
-                        
-                    //     this.turningRight = false;
-                    // } 
-                    // else if(inputs.Down_Key.isDown && this.currentLine > 0 ){ //si volem cambiar de carril i es viable - Dreta
-                    //     this.currentLine--;
-                    //     this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.currentLine], this.speedY);
-                    //     this.isTurning = true;
-                    //     this.turningRight = true;
-                    // }
-                }
-                //WHEELIES
+                
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
                 else {this.isOnWheelies = false;}
 
-                if(this.speedX >= (this.maxSpeedX * 0.9)){
-                    // if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
-                    //     this.tiltCounter = 0;
-                    // }
-                    if(this.PressForward){
-                        this.tiltCounter++;
-                        if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                            this.tiltCounter = 0;
-    
-                            this.wheeliesCounter++;
-                            if(this.wheeliesCounter > 5){
-                                this.wheeliesCounter = 5;
-                            }
-                        }
-                    }
-                    // else if(inputs.Right_Key.isDown){
-                    //     this.tiltCounter++; 
-                    //     if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
-                    //         this.tiltCounter = 0;
-    
-                    //         this.wheeliesCounter--;
-                    //         if(this.wheeliesCounter < -1){
-                    //             this.wheeliesCounter = -1;
-                    //         }
-                    //     }
-                    // }
-                    if(this.wheeliesCounter >= 0){
-                        this.sprite.setTexture('enemy_pilot_wheelies_' + this.wheeliesCounter);
-                    }
-                }
-                else if(this.isOnWheelies){
+                if(this.isOnWheelies){
                     this.tiltCounter++; 
                     if(this.tiltCounter > 4){
                         this.tiltCounter = 0;
@@ -310,30 +228,7 @@ class Enemy {
                 }
                 
             }
-            else { //si esta cambiant de carril
-                if(this.turningRight){ //si esta girant dreta
-                    this.sprite.setTexture('enemy_pilotTurnRight');
-                }
-                else{ //si esta girant esquerra
-                    this.sprite.setTexture('enemy_pilotTurnLeft');
-                }
-                if(this.turningRight && this.sprite.y >= this.lines[this.currentLine]){ //si arriba al carril de destí - Dreta
-                    this.sprite.body.stop();
-                    this.isTurning = false;
-
-                }
-                else if(!this.turningRight && this.sprite.y <= this.lines[this.currentLine]){ //si arriba al carril de destí - Esquerra
-                    this.sprite.body.stop();
-                    this.isTurning = false;
-
-                    
-                }
-                //aqui podrem fer una iteracio quan acabi el gir
-                if(!this.isTurning){
-                    
-                }
-                
-            }
+            
 
         }
 
