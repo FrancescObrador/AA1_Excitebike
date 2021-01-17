@@ -112,8 +112,13 @@ class Player {
             this.handleCrash();
             return;
         }
-
-        if (inputs.A_Key.isDown){ 
+        // Darle prioridad al boost para poder pulsar espacio + shift en el modo boost
+        if(inputs.B_Key.isDown){
+            this.state = this.PlayerState.RUNNING_BOOST;
+            this.speedX += this.accelerationRate;
+            this.maxSpeedX = this.maxSpeedXBoost;
+            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+        } else if (inputs.A_Key.isDown){ 
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
             this.state = this.PlayerState.RUNNING;
@@ -121,12 +126,7 @@ class Player {
                 this.currentHeat += this.overheatRate * customDeltaTime;
             }
         }
-        else if(inputs.B_Key.isDown){
-            this.state = this.PlayerState.RUNNING_BOOST;
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
-        }
+        
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
             this.state = this.PlayerState.SLOWING_DOWN;
