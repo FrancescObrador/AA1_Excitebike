@@ -43,7 +43,10 @@ class Player {
         this.yPos = this.sprite.y;
         
         this.baseHeat = 0.25;
-        this.currentHeat = this.baseHeat;   
+        this.currentHeat = this.baseHeat;    
+        
+        this.lastTiltFront = false;
+        this.justLanded = false;
     } 
 
     static loadAssets(scene){
@@ -137,6 +140,7 @@ class Player {
                 this.isFalling = false;
                 this.isOnAir = false;
                 this.tiltCounter = 0;
+                this.justLanded = true;
 
                 if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
 
@@ -175,7 +179,7 @@ class Player {
                         }
                         
                     }
-                    else{
+                    else if(this.wheeliesTiltCounter >= 1){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
@@ -202,6 +206,8 @@ class Player {
                 this.tiltCounter = 0;
             }
             else if(inputs.Right_Key.isDown){ //si apretem dreta
+                if(!this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = true;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -219,6 +225,8 @@ class Player {
                 }
             }
             else if(inputs.Left_Key.isDown){ //si apretem esquerra
+                if(this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = false;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -241,6 +249,9 @@ class Player {
             }
             else if(this.wheeliesTiltCounter >= 0){
                 this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
+            }
+            else{
+                //console.log("standing");
             }
                 
         }
@@ -269,9 +280,12 @@ class Player {
                 }
                 //WHEELIES
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
-                else {this.isOnWheelies = false;}
+                else {
+                    this.isOnWheelies = false;
+                    this.justLanded = false;
+                }
 
-                if(this.speedX >= (this.maxSpeedX * 0.75)){
+                if(this.speedX >= (this.maxSpeedX * 0.95) && !this.justLanded){
                     if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                         this.tiltCounter = 0;
                     }

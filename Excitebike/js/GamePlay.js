@@ -13,6 +13,8 @@ class GamePlay extends Phaser.Scene{
         
 
         Player.loadAssets(this);
+        Enemy.loadAssets(this);
+
         this.load.xml('obsts', 'assets/map1Info.xml');
 
         this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
@@ -56,6 +58,14 @@ class GamePlay extends Phaser.Scene{
         this.pilotMapPosition = this.pilot.sprite.x;
 
         this.inputs = new InputManager(this);
+        
+        //ENEMIES
+
+        //this.enemy = new Enemy(this, 0);
+        this.enemies = [];
+        this.enemies.push(new Enemy(this, 0));
+        this.enemies.push(new Enemy(this, 2));
+        this.enemies.push(new Enemy(this, 3));
 
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
@@ -95,6 +105,9 @@ class GamePlay extends Phaser.Scene{
         if(!this.isPaused){
             this.timer += customDeltaTime;
             this.pilot.customUpdate(this.inputs);
+            for(var i = 0; i< this.enemies.length;i++){
+                this.enemies[i].customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
+            }
             this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
     
             this.overHeatTextHandler(); 
@@ -106,18 +119,23 @@ class GamePlay extends Phaser.Scene{
             } else {
                 this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
                 this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
-            }
-            
+        
             this.obstacles.forEach(obstacle => {
-            var playerPos = Math.trunc(this.pilotMapPosition);
+                var playerPos = Math.trunc(this.pilotMapPosition);
                 if(this.isInside(playerPos, obstacle) ){
                     obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
+                }
+                for(var i = 0; i< this.enemies.length;i++){
+                    var enemyPos = Math.trunc(this.enemies[i].mapPosition);
+                    if(this.isInside(enemyPos, obstacle) ){
+                        obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                    }
                 }
             });
         
             this.timerManager();
         }
-
+    }
 
     }
     
