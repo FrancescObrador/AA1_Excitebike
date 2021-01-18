@@ -479,7 +479,7 @@ class Player {
     }
 
     crash() { // Generic Crash
-        if(!this.hasFinished){
+        if(!this.hasFinished && !this.isOnAir){
             this.isOnCrash = true;
             this.crashHandled = false;
             this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
