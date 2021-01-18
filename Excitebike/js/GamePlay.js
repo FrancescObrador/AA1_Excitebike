@@ -1,8 +1,10 @@
 class GamePlay extends Phaser.Scene{
     constructor(){
-        super({key: 'GamePlay'});
-   }
-
+        super({key: 'GamePlay'});   
+    }
+    init(levelWithEnemies){
+        this.hasEnemies = levelWithEnemies;
+    }
     preload(){
         var ruta = 'assets/img/';
         this.load.image('backGround', ruta + 'excitebike_map_1.png'); 
@@ -67,10 +69,11 @@ class GamePlay extends Phaser.Scene{
 
         //this.enemy = new Enemy(this, 0);
         this.enemies = [];
-        this.enemies.push(new Enemy(this, 0));
-        this.enemies.push(new Enemy(this, 2));
-        this.enemies.push(new Enemy(this, 3));
-
+        if(this.hasEnemies == true){
+            this.enemies.push(new Enemy(this, 0));
+            this.enemies.push(new Enemy(this, 2));
+            this.enemies.push(new Enemy(this, 3));
+        }
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
 
