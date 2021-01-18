@@ -25,17 +25,20 @@ class Player {
         this.maxSpeedXReduced = 100;
         this.maxSpeedXNormal = 1000;
         this.maxSpeedXBoost = 250;
+        this.isOnRampError = 0.25;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
        
+        // States
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
         this.isOnRamp = false;
-        this.isOnRampError = 0.25;
         this.isSpeedReduced = false;
         this.isOverheated = false;
         this.isOnCrush = false;
+        this.crashHandled = false;
+        this.isOnWheelies;
         
         this.lines = [162,150,138,125,116];
         this.linesX = [70,86 ,102,117];
@@ -44,23 +47,24 @@ class Player {
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
         if(!this.animsCreated) this.createAnims();
         if(!this.soundsCreated) this.createSounds();
-
         this.sprite.anims.play('moving',false);       
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
         this.wheeliesCounter = -1;
-        this.isOnWheelies;
         this.yPos = this.sprite.y;
         
         this.baseHeat = 0.25;
-        this.currentHeat = this.baseHeat;       
+        this.currentHeat = this.baseHeat;    
+        
+        this.lastTiltFront = false;
+        this.justLanded = false;
     } 
 
     static loadAssets(scene){
         var ruta = 'assets/img/pilot/';
         scene.load.image('motorbike',ruta + 'motorbike.png');
-        scene.load.spritesheet('pilotLoop', ruta + 'pilot_loop.png', {frameWidth: 98/4, frameHeight: 24});
+        scene.load.spritesheet('pilotLoop', ruta + 'pilot_loop_f.png', {frameWidth: 98/4, frameHeight: 24});
         scene.load.spritesheet('pilotGetUp', ruta + 'pilot_get_up.png', {frameWidth: 77/3, frameHeight: 21});
         scene.load.spritesheet('pilotMoving', ruta + 'pilot_moving.png',{frameWidth: 40/2, frameHeight: 21});
         scene.load.spritesheet('pilotRunning', ruta + 'pilot_running.png',{frameWidth: 28/2, frameHeight: 16});
@@ -77,6 +81,7 @@ class Player {
         scene.load.image('pilot_wheelies_3',ruta + 'pilot_wheelies_3.png');
         scene.load.image('pilot_wheelies_4',ruta + 'pilot_wheelies_4.png');
         scene.load.image('pilot_wheelies_5',ruta + 'pilot_wheelies_5.png');
+        scene.load.spritesheet('pilot_bike_fall', ruta + 'pilot_bike_fall.png', {frameWidth: 60, frameHeight: 50});
         this.minY = 0;
 
         ruta = 'assets/sounds/';
@@ -118,9 +123,14 @@ class Player {
             this.maxSpeedX = this.maxSpeedXNormal;   
             this.speedX += this.accelerationRate;
             this.state = this.PlayerState.RUNNING;
-            if (this.currentHeat < 0.5) {
+            if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
                 this.currentHeat += this.overheatRate * customDeltaTime;
             }
+        }
+        else if(inputs.B_Key.isDown){
+            this.speedX += this.accelerationRate;
+            this.maxSpeedX = this.maxSpeedXBoost;
+            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
         }
         else if(this.speedX > 0) {
             this.speedX -= this.accelerationRate;
@@ -179,6 +189,7 @@ class Player {
                 this.isFalling = false;
                 this.isOnAir = false;
                 this.tiltCounter = 0;
+                this.justLanded = true;
 
                 if(this.frontTiltCounter >= 1){ //si esta tiltejada cap endevan crasheja o si esta molt proper a la rampa no
 
@@ -194,8 +205,7 @@ class Player {
                         console.log("alive");
                     }
                     else{
-                        console.log("crashed");
-                        this.isOnCrash;
+                        this.crash();
                     }
                     
                 }
@@ -216,7 +226,7 @@ class Player {
                             this.speedX *= 0.6;
                         }
                     }
-                    else{
+                    else if(this.wheeliesTiltCounter >= 1){
                         if(this.speedX > this.maxSpeedXBoost){
                             this.speedX *= 0.8;
                         }
@@ -240,6 +250,8 @@ class Player {
                 this.tiltCounter = 0;
             }
             else if(inputs.Right_Key.isDown){ //si apretem dreta
+                if(!this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = true;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -257,6 +269,8 @@ class Player {
                 }
             }
             else if(inputs.Left_Key.isDown){ //si apretem esquerra
+                if(this.lastTiltFront) this.tiltCounter = 0;
+                this.lastTiltFront = false;
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
@@ -278,7 +292,11 @@ class Player {
             }
             else if(this.wheeliesTiltCounter >= 0){
                 this.sprite.setTexture('pilot_wheelies_' + this.wheeliesTiltCounter);
-            }    
+            }
+            else{
+                //console.log("standing");
+            }
+                
         }
         else if(this.isOnAir){
             if(this.wheeliesTiltCounter >= 0){
@@ -305,9 +323,12 @@ class Player {
                 }
                 //WHEELIES
                 if(this.wheeliesCounter >= 0){this.isOnWheelies = true;} 
-                else {this.isOnWheelies = false;}
+                else {
+                    this.isOnWheelies = false;
+                    this.justLanded = false;
+                }
 
-                if(this.speedX >= (this.maxSpeedX * 0.75)){
+                if(this.speedX >= (this.maxSpeedX * 0.95) && !this.justLanded){
                     if((inputs.Right_Key.isDown && inputs.Left_Key.isDown) || (inputs.Right_Key.isUp && inputs.Left_Key.isUp)){ //si estan las dues apretades o cap
                         this.tiltCounter = 0;
                     }
@@ -436,7 +457,7 @@ class Player {
         this.currScene.anims.create({
             key: 'loop',
             frames: this.currScene.anims.generateFrameNumbers('pilotLoop', { start: 0, end: 3 }),
-            frameRate: 5,
+            frameRate: 10,
             repeat: -1
         });
         this.currScene.anims.create({
@@ -445,20 +466,49 @@ class Player {
             frameRate: 5,
             repeat: -1
         });
+        this.currScene.anims.create({
+            key: 'bike_fall',
+            frames: this.currScene.anims.generateFrameNumbers('pilot_bike_fall', { start: 0, end: 8 }),
+            frameRate: 4,
+            repeat: 0
+        });
+       
     }
 
     crash() { // Generic Crash
         this.isOnCrash = true;
+        this.crashHandled = false;
         this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
         this.speedX = 0;
-        this.sprite.setTexture('pilotStanding');
+
+        if(this.isOverHeated) {
+            this.sprite.setTexture('pilotStanding');
+        } else {
+            this.sprite.anims.play('loop', true);
+        }
     }
 
     handleCrash() { // Function to handle every type of Crash (Go-out sequence) Overheat, Fall Crash and Bike-bike crash
-        if( this.sprite.y <= this.lines[this.lines.length-1]){
+        
+        if( this.sprite.y <= this.lines[this.lines.length-1] && !this.crashHandled){
+            this.crashHandled = true;
             this.sprite.body.stop();
             this.currentLine = this.lines.length-1;
-            this.isOverHeated? this.currScene.time.delayedCall(3000, this.overheatDelay, [], this) : this.isOnCrash = false;
+           
+            if(this.isOverHeated){
+                this.currScene.time.delayedCall(3000, ()=> { 
+                    this.isOverHeated = false; 
+                    this.isOnCrash = false;
+                }, [], this);
+            } else {
+                this.sprite.anims.play('bike_fall', true);
+                this.sprite.y = 100;
+
+                this.currScene.time.delayedCall(1500, ()=> {
+                    this.isOnCrash = false;
+                    this.sprite.anims.play('moving', true);
+                }, [], this);
+            }
         }
     }
 

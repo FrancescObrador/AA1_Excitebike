@@ -13,6 +13,8 @@ class GamePlay extends Phaser.Scene{
         
 
         Player.loadAssets(this);
+        Enemy.loadAssets(this);
+
         this.load.xml('obsts', 'assets/map1Info.xml');
 
         this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
@@ -55,6 +57,15 @@ class GamePlay extends Phaser.Scene{
         
         this.pilotMapPosition = this.pilot.sprite.x;
         this.inputs = new InputManager(this);
+        
+        //ENEMIES
+
+        //this.enemy = new Enemy(this, 0);
+        this.enemies = [];
+        this.enemies.push(new Enemy(this, 0));
+        this.enemies.push(new Enemy(this, 2));
+        this.enemies.push(new Enemy(this, 3));
+
         // HUD
         this.hud = this.add.image(config.width/2, config.height, 'hud').setOrigin(0.5, 1).setScale(1.1);
 
@@ -68,6 +79,8 @@ class GamePlay extends Phaser.Scene{
         this.finalTime = 0;
 
         // HUD
+        this.countdownTime = 15.0;
+        this.timer = 0;
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
         this.overheatText = this.add.bitmapText(config.width/2, config.height/3, 'nesFont', "OVERHEATH", 10).setOrigin(0.5); 
@@ -76,52 +89,74 @@ class GamePlay extends Phaser.Scene{
 
         this.overHeatUI = this.createBar(config.width/2 - 16, config.height - 26, 35, 9, 0xe85800);
         this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+        
+        this.isPaused = false; 
+        this.ChangePauseState();
+        this.isInforcedPause = true;
+        this.inputs.P_Key.on('up', this.ChangePauseState, this); 
+    } 
+ 
+    ChangePauseState(){ 
+        this.isPaused = !this.isPaused; 
+        this.pilot.sprite.active = !this.isPaused; 
     }
 
     update(){
+        
         customDeltaTime = 1.0 / juego.loop.actualFps;
-        
 
-        this.pilot.customUpdate(this.inputs);
-        this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
-
-        this.OverHeatTextHandler(); 
-
-        if(this.pilotMapPosition >= this.goal.end)  // finish reached
-        {
-            this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
-            this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
-        } else {
-            this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
-            this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
-        }
-        
-        this.obstacles.forEach(obstacle => {
-        var playerPos = Math.trunc(this.pilotMapPosition);
-            if(this.isInside(playerPos, obstacle) ){
-                obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
+        if(this.isInforcedPause){
+            this.timer += customDeltaTime;
+            console.log(this.timer);
+            if(this.timer >= this.countdownTime-15) {
+                this.isInforcedPause = false;
+                this.ChangePauseState();
+                this.timer = 0;
             }
-        });
-    
-        //TIMER - sets the 3 variables in seconds - float
-        this.timer = (this.game.getTime()/1000)- this.startTime;
-        this.hudTimer.text = this.convertToTime(this.timer);
-        
-        if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
-            this.lapOneTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
         }
-        if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
-            this.lapTwoTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
-        }  
-        if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
-            this.finalTime = this.timer;
-            this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
-            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
-        } 
+
+        if(!this.isPaused){
+            this.timer += customDeltaTime;
+            this.pilot.customUpdate(this.inputs);
+ 
+            this.enemies.forEach(enemy => {
+                enemy.customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
+
+                if(this.physics.overlap(this.pilot.sprite, enemy.sprite)){
+                    if(this.pilot.currentLine == enemy.currentLine){
+                        this.pilot.crash();
+                    }
+                }
+            });
+
+            this.setBarValue(this.overHeatUI, this.pilot.currentHeat);
+    
+            this.overHeatTextHandler(); 
+    
+            if(this.pilotMapPosition >= this.goal.end)  // finish reached
+            {
+                this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
+                this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
+            } else {
+                this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
+                this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
+        
+            this.obstacles.forEach(obstacle => {
+                var playerPos = Math.trunc(this.pilotMapPosition);
+                if(this.isInside(playerPos, obstacle) ){
+                    obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
+                }
+                for(var i = 0; i< this.enemies.length;i++){
+                    var enemyPos = Math.trunc(this.enemies[i].mapPosition);
+                    if(this.isInside(enemyPos, obstacle) ){
+                        obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                    }
+                }
+            });
+        
+            this.timerManager();
+        }
+    }
 
         this.pilot.soundsManager();
     }
@@ -142,6 +177,27 @@ class GamePlay extends Phaser.Scene{
     eraseText()
     {
       this.texto.text = "";
+    }
+
+    timerManager(){
+        //TIMER - sets the 3 variables in seconds - float
+        this.hudTimer.text = this.convertToTime(this.timer);
+        
+        if(this.pilotMapPosition >= this.lap1.end && this.lapOneTime == 0){
+            this.lapOneTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapOneTime);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+        }
+        if(this.pilotMapPosition >= this.lap2.end && this.lapTwoTime == 0){
+            this.lapTwoTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.lapTwoTime);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+        }  
+        if(this.pilotMapPosition >= this.goal.end && this.finalTime == 0){
+            this.finalTime = this.timer;
+            this.texto.text = "Lap \n" + this.convertToTime(this.finalTime);
+            this.lifespan = this.time.delayedCall(3000, this.eraseText, [], this);
+        } 
     }
 
     convertToTime(time)
@@ -192,7 +248,7 @@ class GamePlay extends Phaser.Scene{
 		 bar.scaleX = value;
     }
     
-    OverHeatTextHandler() { 
+    overHeatTextHandler() { 
         if(this.pilot.isOverHeated){ 
             this.overheatText.visible = !!(parseInt(((this.timer%1)*10)%2)); // this returns alternatively true or fasle every 0.1 seconds 
             if (!this.isGoLaunched) { 
@@ -200,6 +256,7 @@ class GamePlay extends Phaser.Scene{
                 this.time.delayedCall(2700, ()=> {this.overheatText.text = "GO"; this.isGoLaunched = false;}, [], this); 
             } 
         } else{ 
+            this.overheatText.text = "OVERHEAT";
             this.overheatText.visible = this.pilot.isOverHeated; 
         } 
     } 
