@@ -110,12 +110,12 @@ class GamePlay extends Phaser.Scene{
     }
 
     update(){
-        console.clear();
+        //console.clear();
         customDeltaTime = 1.0 / juego.loop.actualFps;
 
         if(this.isInforcedPause){
             this.timer += customDeltaTime;
-            console.log(this.timer);
+            //console.log(this.timer);
             if(this.timer >= 8.0 && !this.beepHasPlayed) {
                 this.beepHasPlayed = true;
                 this.soundsTable['start_counter'].play();
@@ -133,7 +133,11 @@ class GamePlay extends Phaser.Scene{
  
             this.enemies.forEach(enemy => {
                 enemy.customUpdate(this.pilotMapPosition,this.pilot.speedX, customDeltaTime);
-
+                if(enemy.freeLine){
+                    enemy.currentLine = this.giveFreeLine();
+                    enemy.freeLine = false;
+                    enemy.confirmedFreeLine = true;
+                }
                 if(this.physics.overlap(this.pilot.sprite, enemy.sprite)){
                     if(this.pilot.currentLine == enemy.currentLine){
                         this.pilot.crash();
@@ -287,7 +291,17 @@ class GamePlay extends Phaser.Scene{
             this.overheatText.visible = this.pilot.isOverHeated; 
         } 
     } 
- 
+    
+    giveFreeLine(){
+        var aux = 0;
+        for(var i = 0; i< this.enemies.length;i++){
+            if(this.enemies[i].currentLine == aux){
+                aux++;
+                i = 0;
+            }
+        }
+        return aux;
+    }
 
 }
 

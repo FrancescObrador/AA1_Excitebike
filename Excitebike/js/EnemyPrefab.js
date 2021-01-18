@@ -47,6 +47,9 @@ class Enemy {
         this.isActive = true;
         this.rnd = new Phaser.Math.RandomDataGenerator(config.seed);
         this.maxSpeedXNormalBase = this.rnd.between(190,210); //velocitat base random
+
+        this.freeLine = false;
+        this.confirmedFreeLine = false;
     } 
 
     static loadAssets(scene){
@@ -87,9 +90,7 @@ class Enemy {
             this.isOnAir = false;
             this.isFalling = false;
             this.isOnRamp = false;
-
-            this.yPos = this.minY;
-            this.sprite.y = this.minY;
+            this.freeLine = true;
         }
         else if(this.sprite.x >= config.width + 100){
 
@@ -99,11 +100,16 @@ class Enemy {
             this.isOnAir = false;
             this.isFalling = false;
             this.isOnRamp = false;
+            this.freeLine = true;
+        }
+        if(this.confirmedFreeLine){
 
+            this.minY = this.lines[this.currentLine];
             this.yPos = this.minY;
             this.sprite.y = this.minY;
+            this.confirmedFreeLine = false;
+            this.freeLine = false;
         }
-        
 
 
         if(this.isActive){
