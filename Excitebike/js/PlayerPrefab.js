@@ -1,9 +1,20 @@
-
 class Player {
     static animsCreated = false;
+    static soundsCreated = true;
 
+    
+    PlayerState = {
+        STOPED: "STOPPED",
+        RUNNING: "RUNNING",
+        SLOWING_DOWN: "SLOWING DOWN",
+        CRASHED: "CRASH",
+        RUNNING_BOOST: "BOOST",
+        REDUCED_SPEED: "REDUCED SPEED"
+    };
     constructor(scene, newLine){
 
+        this.state = this.PlayerState.STOPED;
+        this.prevState = this.PlayerState.RUNNING;
         this.currScene = scene;
         this.accelerationRate = 2.5;
         this.overheatRate = 0.1;
@@ -17,8 +28,9 @@ class Player {
         this.isOnRampError = 0.25;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
-       
+        
         // States
+        this.hasFinished = false;
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
@@ -34,8 +46,9 @@ class Player {
         this.minY = this.lines[this.currentLine];
         this.OriginalXPos = this.linesX[this.currentLine];
         this.sprite = this.currScene.physics.add.sprite(this.OriginalXPos, this.lines[this.currentLine],'pilotStanding');
-        if(!this.animsCreated)this.createAnims();
-        this.sprite.anims.play('moving',false);    
+        if(!this.animsCreated) this.createAnims();
+        if(!this.soundsCreated) this.createSounds();
+        this.sprite.anims.play('moving',false);       
         this.tiltCounter = 0;
         this.frontTiltCounter = -1;
         this.wheeliesTiltCounter = -1;
@@ -72,14 +85,24 @@ class Player {
         scene.load.spritesheet('pilot_bike_fall', ruta + 'pilot_bike_fall.png', {frameWidth: 60, frameHeight: 50});
         this.minY = 0;
 
+        ruta = 'assets/sounds/';
+        scene.load.audio('sfx_acc_normal', ruta + 'pilot_acc_normal.wav');
+        scene.load.audio('sfx_acc_boost', ruta + 'pilot_acc_boost.wav'); 
+        scene.load.audio('sfx_acc_reduced', ruta + 'pilot_acc_reduced.wav');
+        scene.load.audio('sfx_acc_none', ruta + 'pilot_acc_none.wav'); 
+        scene.load.audio('sfx_crash', ruta + 'pilot_crash.wav');
+        scene.load.audio('sfx_jump_normal', ruta + 'pilot_jump_normal.wav');
+        scene.load.audio('sfx_jump_super', ruta + 'pilot_jump_super.wav');
+
     }
 
     customUpdate(inputs){
 
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
-         // Overheat Handle
-         if(this.currentHeat >= 1){
+        if(this.currentHeat >= 1 && !this.isOnAir && !this.isOnRamp){
+            //TODO Implement "Crash"
+            // Overheat Handle
             this.isOverHeated = true;
             this.crash();
         }
@@ -89,54 +112,81 @@ class Player {
             this.handleCrash();
             return;
         }
-
-        if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = this.maxSpeedXNormal;   
-            this.speedX += this.accelerationRate;
-        
-            if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
-                this.currentHeat += this.overheatRate * customDeltaTime;
+        // Darle prioridad al boost para poder pulsar espacio + shift en el modo boost
+        if(!this.hasFinished){
+                
+            if(inputs.B_Key.isDown){
+                this.state = this.PlayerState.RUNNING_BOOST;
+                this.speedX += this.accelerationRate;
+                this.maxSpeedX = this.maxSpeedXBoost;
+                if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+            } else if (inputs.A_Key.isDown){ 
+                this.maxSpeedX = this.maxSpeedXNormal;   
+                this.speedX += this.accelerationRate;
+                this.state = this.PlayerState.RUNNING;
+                if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
+                    this.currentHeat += this.overheatRate * customDeltaTime;
+                }
             }
-        }
-        else if(inputs.B_Key.isDown){
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1 && !this.isOnAir && !this.isOnRamp) { 
-                this.currentHeat += this.overheatRate*1.5 * customDeltaTime; 
+            else if(inputs.B_Key.isDown){
+                this.speedX += this.accelerationRate;
+                this.maxSpeedX = this.maxSpeedXBoost;
+                if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
             }
-        }
-        else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
-        }
-        
-        if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
-        
-        if(this.isSpeedReduced){
-            this.maxSpeedX = this.maxSpeedXReduced;
-        }
-        
-        if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
-            this.speedX = 0;
-            this.sprite.setTexture('pilotStanding');
-        }
-        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
-            this.speedX = this.maxSpeedX;
+            else if(this.speedX > 0) {
+                this.speedX -= this.accelerationRate;
+                this.state = this.PlayerState.SLOWING_DOWN;
+            }
             
-        }
-
+            if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
+            
+            if(this.isSpeedReduced){
+                this.maxSpeedX = this.maxSpeedXReduced;
+                this.state = this.PlayerState.REDUCED_SPEED;
+            }
+            
+            if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
+                this.speedX = 0;
+                this.state = this.PlayerState.STOPED;
+                this.sprite.setTexture('pilotStanding');
+            }
+            else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+                this.speedX = this.maxSpeedX;
+            }
+        }else{
+            this.speedX = this.maxSpeedX;
+        }    
         //Y velocity
         if(this.isFalling){ //jugador esta caient
-            
-
             if(this.isOnRamp == true){
                 this.sprite.body.velocity.y += (this.gravity);
-
                 if(this.sprite.y >= this.lines[this.currentLine] - this.minY){
+                    
+                    if(this.sprite.body.velocity.y >= 50.0){
+                        if(this.sprite.body.velocity.y <= 200.0){
+                            this.soundsTable['jump_normal'].play();
+                            console.log("Normal");
+                        } else{
+                            this.soundsTable['jump_super'].play();
+                            console.log("super");
+                        }
+                    }
                     this.sprite.body.velocity.y = 0;
                     this.sprite.y = this.lines[this.currentLine]  - this.minY;
                 }
             }
             else if(this.sprite.y >= this.lines[this.currentLine]){ //si ha arribat a la linea on estava el frenem i resetejem booleanes
+                
+                if(this.sprite.body.velocity.y >= 50.0){
+                    if(this.sprite.body.velocity.y <= 200.0){
+                        this.soundsTable['jump_normal'].play();
+                        console.log("Normal");
+                    } else{
+                        this.soundsTable['jump_super'].play();
+                        console.log("super");
+                    }
+                }
+
                 this.sprite.body.velocity.y = 0;
                 this.sprite.y = this.lines[this.currentLine];
                 this.isFalling = false;
@@ -169,8 +219,7 @@ class Player {
                         }
                         else{
                             this.speedX *= 0.4;
-                        }
-                        
+                        } 
                     }
                     else if(this.wheeliesTiltCounter >= 2){
                         if(this.speedX > this.maxSpeedXBoost){
@@ -179,7 +228,6 @@ class Player {
                         else{
                             this.speedX *= 0.6;
                         }
-                        
                     }
                     else if(this.wheeliesTiltCounter >= 1){
                         if(this.speedX > this.maxSpeedXBoost){
@@ -196,9 +244,6 @@ class Player {
                     this.wheeliesTiltCounter = -1;
                     this.wheeliesCounter = -1;
                 }
-               
-                
-
             }
             else{
                 this.sprite.body.velocity.y += (this.gravity); //sino simulem gravetat
@@ -232,7 +277,6 @@ class Player {
                 this.tiltCounter++;
                 if(this.tiltCounter > 2){ //podem controlar lo rapid que fa la transicio d'sprite, ho controlem amb frames
                     this.tiltCounter = 0;
-
 
                     if(this.frontTiltCounter <0){ //si no esta fent front tilt
                         this.wheeliesTiltCounter++;
@@ -350,18 +394,12 @@ class Player {
                     
                 }
                 //aqui podrem fer una iteracio quan acabi el gir
-                if(!this.isTurning){
-                    
+                if(!this.isTurning){      
                 }
-                
             }
-
         }
-
-        //FIX THIS SHIT - o potser no eh
         if(!this.isOnAir && !this.isTurning){
             this.sprite.y = this.lines[this.currentLine];
-         
         }
         // NO eliminar
         this.yPos = this.sprite.y;
@@ -441,15 +479,17 @@ class Player {
     }
 
     crash() { // Generic Crash
-        this.isOnCrash = true;
-        this.crashHandled = false;
-        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
-        this.speedX = 0;
-
-        if(this.isOverHeated) {
-            this.sprite.setTexture('pilotStanding');
-        } else {
-            this.sprite.anims.play('loop', true);
+        if(!this.hasFinished){
+            this.isOnCrash = true;
+            this.crashHandled = false;
+            this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
+            this.speedX = 0;
+            this.state = this.PlayerState.CRASHED;
+            if(this.isOverHeated) {
+                this.sprite.setTexture('pilotStanding');
+            } else {
+                this.sprite.anims.play('loop', true);
+            }
         }
     }
 
@@ -476,4 +516,91 @@ class Player {
             }
         }
     }
+
+    overheatDelay(){
+        this.isOnCrash = false;
+        this.isOverHeated = false; 
+    }
+
+    createSounds(){
+        this.soundsCreated = true;
+
+        this.soundsTable = {};
+        this.soundsTable['acc_normal'] = juego.sound.add('sfx_acc_normal', {loop: true});
+        this.soundsTable['acc_boost'] = juego.sound.add('sfx_acc_boost', {loop: true});
+        this.soundsTable['acc_reduced'] = juego.sound.add('sfx_acc_reduced', {loop: true});
+        this.soundsTable['acc_none'] = juego.sound.add('sfx_acc_none', {loop: true});
+        this.soundsTable['jump_normal'] = juego.sound.add('sfx_jump_normal');
+        this.soundsTable['jump_super'] = juego.sound.add('sfx_jump_super');
+        this.soundsTable['crash'] = juego.sound.add('sfx_crash');
+
+       
+    }
+
+    soundsManager(){
+
+        if(this.prevState != this.state){ // Just switched state
+            this.soundsTable['acc_normal'].stop();
+            this.soundsTable['acc_boost'].stop();
+            this.soundsTable['acc_reduced'].stop();
+            this.soundsTable['acc_none'].stop();
+            this.soundsTable['crash'].stop();
+            switch(this.state){
+                case this.PlayerState.STOPED:
+                    this.soundsTable['acc_none'].play();
+                    break;
+                case this.PlayerState.RUNNING:
+                    this.soundsTable['acc_normal'].play();
+                    break;
+                case this.PlayerState.SLOWING_DOWN:
+                    this.soundsTable['acc_reduced'].play();
+                    break;
+                case this.PlayerState.CRASHED:
+                    this.soundsTable['crash'].play();
+                    break;
+                case this.PlayerState.RUNNING_BOOST:
+                    this.soundsTable['acc_boost'].play();
+                    break;
+                case this.PlayerState.REDUCED_SPEED:
+                    this.soundsTable['acc_reduced'].play();
+                    break;
+            }
+            this.prevState = this.state;
+        }
+
+    }
+
+
+    playCustomSong(state){
+        this.soundsTable['acc_normal'].stop();
+        this.soundsTable['acc_boost'].stop();
+        this.soundsTable['acc_reduced'].stop();
+        this.soundsTable['acc_none'].stop();
+        this.soundsTable['crash'].stop();
+        switch(this.state){
+            case this.PlayerState.STOPED:
+                this.soundsTable['acc_none'].play();
+                break;
+            case this.PlayerState.RUNNING:
+                this.soundsTable['acc_normal'].play();
+                break;
+            case this.PlayerState.SLOWING_DOWN:
+                this.soundsTable['acc_reduced'].play();
+                break;
+            case this.PlayerState.CRASHED:
+                this.soundsTable['crash'].play();
+                break;
+            case this.PlayerState.RUNNING_BOOST:
+                this.soundsTable['acc_boost'].play();
+                break;
+            case this.PlayerState.REDUCED_SPEED:
+                this.soundsTable['acc_reduced'].play();
+                break;
+        }
+    }
+    preUpdate(){
+
+    } 
+
+    
 }

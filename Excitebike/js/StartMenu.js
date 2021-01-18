@@ -18,10 +18,20 @@ class StartMenu extends Phaser.Scene{
 		this.load.image('designScreen', ruta + "designScreen.png" )
 
 		this.load.image('cursor', ruta + "cursor.png");
+
+
+		ruta = 'assets/sounds/';
+        this.load.audio('cursor_move', ruta + 'move_cursor.wav');
+        this.load.audio('title_screen', ruta + 'title_screen.wav');
+        this.load.audio('start_engines', ruta + 'start_your_engines.wav');
 	}
 
 	create(){
 
+		this.soundsTable = {};
+        this.soundsTable['cursor'] = this.sound.add('cursor_move');
+        this.soundsTable['mainMusic'] = this.sound.add('title_screen', {loop: true});
+        this.soundsTable['startEngines'] = this.sound.add('start_engines');
 		// Setup inputs
 		this.inputs = new InputManager(this);
 		this.inputs.Up_Key.on('up', this.CursorUp, this);
@@ -35,6 +45,8 @@ class StartMenu extends Phaser.Scene{
 		this.cursorPositions = new Array(0);
 		this.cursor = this.add.image(0, this.cursorPositions[0], 'cursor').setScale(0.25).setOrigin(0);
 		this.LoadStartScreen();
+		this.game.sound.stopAll();
+		this.soundsTable['mainMusic'].play(); // No se porque no suena en el momento lol
 	}
 	
 	update(){
@@ -44,8 +56,8 @@ class StartMenu extends Phaser.Scene{
 
 	LoadStartScreen()
 	{
-		
 		console.log("loading start screen");
+		
 		this.menu = this.add.image(0, 0, 'initialScreen').setScale(0.25).setOrigin(0);
 		
 		this.cursorPositions =  [128, 144, 160]; // no tocar
@@ -64,6 +76,7 @@ class StartMenu extends Phaser.Scene{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == 0 || this.cursorState == 1){
 				console.log("loading tracks screen");
+
 				this.menu = this.add.image(0, 0, 'tracksScreen').setOrigin(0);
 				
 				this.cursorPositions = [72, 96 ,120, 144, 168]; // no tocar
@@ -84,6 +97,8 @@ class StartMenu extends Phaser.Scene{
 		}
 		else if (this.currentScreen == screens.TRACKS){
 			this.scene.start("GamePlay");
+			this.soundsTable['mainMusic'].stop();
+			this.soundsTable['startEngines'].play();
 			this.scene.stop("StartMenu");
 		}
 	}
@@ -92,7 +107,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == 0) return;
-		
+			this.soundsTable['cursor'].play();
 			this.cursorState -= 1;
 			this.cursor.y = this.cursorPositions[this.cursorState];
 		}
@@ -102,7 +117,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == this.cursorPositions.length -1) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState +=1;
 			this.cursor.y = this.cursorPositions[this.cursorState];
 		}
@@ -112,7 +127,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.TRACKS){
 			if(this.cursorState == this.cursorPositions.length -1) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState +=1;
 			this.cursor.x = this.cursorPositions[this.cursorState];
 		}
@@ -122,7 +137,7 @@ class StartMenu extends Phaser.Scene{
 	{
 		if(this.currentScreen == screens.TRACKS){
 			if(this.cursorState == 0) return;
-			
+			this.soundsTable['cursor'].play();
 			this.cursorState -= 1;
 			this.cursor.x = this.cursorPositions[this.cursorState];
 		}
