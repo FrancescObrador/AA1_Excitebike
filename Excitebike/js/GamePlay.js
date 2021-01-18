@@ -158,35 +158,45 @@ class GamePlay extends Phaser.Scene{
                 this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
                 this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         
-            this.obstacles.forEach(obstacle => {
-                var playerPos = Math.trunc(this.pilotMapPosition);
-                if(this.isInside(playerPos, obstacle) ){
-                    obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
-                }
-                for(var i = 0; i< this.enemies.length;i++){
-                    var enemyPos = Math.trunc(this.enemies[i].mapPosition);
-                    if(this.isInside(enemyPos, obstacle) ){
-                        obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                
+                this.obstacles.forEach(obstacle => {
+                    var playerPos = Math.trunc(this.pilotMapPosition);
+                    if(this.isInside(playerPos, obstacle, false, null) ){
+                        obstacle.actOnPlayer(this.pilot,playerPos, this.pilot.yPos, this.pilot.expectedLine, obstacle);
                     }
-                }
-            });
-        
-            this.timerManager();
+                    for(var i = 0; i< this.enemies.length;i++){
+                        var enemyPos = Math.trunc(this.enemies[i].mapPosition);
+                        if(this.isInside(enemyPos, obstacle, true, this.enemies[i]) ){
+                            obstacle.actOnEnemy(this.enemies[i],enemyPos, this.enemies[i].yPos,this.enemies[i].expectedLine, obstacle);
+                        }
+                    }
+                });
+            
+                this.timerManager();
+            }
         }
-    }
-
         this.pilot.soundsManager();
     }
     
-    isInside(positionX, _obstacle)
+    isInside(positionX, _obstacle, isEnemy, enemy)
     {
         if(positionX >= _obstacle.x && positionX <= _obstacle.end) {
             if(_obstacle.obstSubType == "miniRamp"){
-                if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1 ||this.pilot.currentLine == _obstacle.currentLane + 2 ) 
-                return true;
+                if(enemy == null){
+                    if (this.pilot.currentLine == _obstacle.currentLane || this.pilot.currentLine == _obstacle.currentLane + 1 ||this.pilot.currentLine == _obstacle.currentLane + 2 ) 
+                        return true;
+                }else{
+                    if (enemy.currentLine == _obstacle.currentLane || enemy.currentLine == _obstacle.currentLane + 1 || enemy.currentLine == _obstacle.currentLane + 2 ) 
+                        return true;
+                }
             }
-            if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
-            return true;
+            if(enemy == null){
+                if (this.pilot.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
+                    return true;
+            }else{
+                if (enemy.currentLine == _obstacle.currentLane || _obstacle.isAllLane) 
+                    return true;
+            }
         }
         return false;
     }

@@ -113,7 +113,7 @@ class Player {
             return;
         }
         // Darle prioridad al boost para poder pulsar espacio + shift en el modo boost
-        if(!this.hasFinished && !this.isOnAir){
+        if(!this.hasFinished){
                 
             if(inputs.B_Key.isDown){
                 this.state = this.PlayerState.RUNNING_BOOST;
