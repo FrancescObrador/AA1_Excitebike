@@ -77,16 +77,16 @@
   <obstacle type="mud" position="12236" lane ="0"></obstacle>
   <obstacle type="mud" position="12236" lane ="2"></obstacle>
   <obstacle type="bigRamp" position="12316" lane ="-1"></obstacle>
-  <obstacle type="smallRamp" position="13052" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="12644" lane ="0"></obstacle>
   <obstacle type="speed" position="12980" lane ="0"></obstacle>
   <obstacle type="smallRamp" position="13076" lane ="-1"></obstacle>
   <obstacle type="smallRamp" position="13132" lane ="-1"></obstacle>
   <obstacle type="smallRamp" position="13644" lane ="-1"></obstacle>
   <obstacle type="smallRamp" position="13700" lane ="-1"></obstacle>
-  <obstacle type="smallRamp" position="13757" lane ="-1"></obstacle>
+  <obstacle type="smallRamp" position="13755" lane ="-1"></obstacle>
   <obstacle type="speed" position="13908" lane ="3"></obstacle>
-  <obstacle type="mud" position="14051" lane ="1"></obstacle>
-  <obstacle type="mud" position="14051" lane ="3"></obstacle>
+  <obstacle type="mud" position="14052" lane ="1"></obstacle>
+  <obstacle type="mud" position="14052" lane ="3"></obstacle>
   <obstacle type="bigLeftRamp" position="14204" lane ="-1"></obstacle>
   <obstacle type="bigRightRamp" position="14296" lane ="-1"></obstacle>
   <obstacle type="miniRamp" position="14684" lane ="2"></obstacle>
@@ -105,10 +105,10 @@
   <obstacle type="longRamp" position="16244" lane ="-1"></obstacle>
   <obstacle type="mud" position="16532" lane ="1"></obstacle>
   <obstacle type="mud" position="16532" lane ="3"></obstacle>
-  <obstacle type="mud" position="16643" lane ="0"></obstacle>
-  <obstacle type="mud" position="16643" lane ="2"></obstacle>
-  <obstacle type="mud" position="16779" lane ="1"></obstacle>
-  <obstacle type="mud" position="16779" lane ="3"></obstacle>  
+  <obstacle type="mud" position="16644" lane ="0"></obstacle>
+  <obstacle type="mud" position="16644" lane ="2"></obstacle>
+  <obstacle type="mud" position="16780" lane ="1"></obstacle>
+  <obstacle type="mud" position="16780" lane ="3"></obstacle>  
   <obstacle type="finish" position="16916" lane ="-1"></obstacle>  
 
 </obstacles>
