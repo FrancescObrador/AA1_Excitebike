@@ -511,6 +511,7 @@ class Player {
 
                 this.currScene.time.delayedCall(1500, ()=> {
                     this.isOnCrash = false;
+                    this.sprite.y = this.lines[this.lines.length-1];
                     this.sprite.anims.play('moving', true);
                 }, [], this);
             }
