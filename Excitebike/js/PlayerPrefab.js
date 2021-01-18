@@ -406,6 +406,8 @@ class Player {
         this.expectedLine = this.lines[this.currentLine];
         this.isSpeedReduced = false;
         this.isOnRamp = false;
+
+        this.sprite.depth = this.lines.length + 1 - this.currentLine;
     }
 
     rampActivate(strength){
