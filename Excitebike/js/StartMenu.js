@@ -46,7 +46,9 @@ class StartMenu extends Phaser.Scene{
 		this.cursor = this.add.image(0, this.cursorPositions[0], 'cursor').setScale(0.25).setOrigin(0);
 		this.LoadStartScreen();
 		this.game.sound.stopAll();
-		this.soundsTable['mainMusic'].play(); // No se porque no suena en el momento lol
+		this.soundsTable['mainMusic'].play(); // No se porque no suena en el momento
+
+		this.hasEnemies = false;
 	}
 	
 	update(){
@@ -65,7 +67,7 @@ class StartMenu extends Phaser.Scene{
 		this.cursor.setPosition(config.width/3, this.cursorPositions[this.cursorState]);
 
 		this.cursor.depth = 1;
-		this.cursor.setVisible(true);
+		this.cursor.setVisible(true); 
 
 		this.currentScreen = screens.START;
 
@@ -76,6 +78,8 @@ class StartMenu extends Phaser.Scene{
 		if(this.currentScreen == screens.START){
 			if(this.cursorState == 0 || this.cursorState == 1){
 				console.log("loading tracks screen");
+
+				if(this.cursorState == 1) this.hasEnemies = true;
 
 				this.menu = this.add.image(0, 0, 'tracksScreen').setOrigin(0);
 				
@@ -96,7 +100,7 @@ class StartMenu extends Phaser.Scene{
 			}
 		}
 		else if (this.currentScreen == screens.TRACKS){
-			this.scene.start("GamePlay");
+			this.scene.start("GamePlay", this.hasEnemies);
 			this.soundsTable['mainMusic'].stop();
 			this.soundsTable['startEngines'].play();
 			this.scene.stop("StartMenu");
