@@ -1,10 +1,10 @@
 var config = {
     type: Phaser.AUTO,
-    width: 128, 
-    height: 256, 
-    scene: [gameState], //Array con los niveles   
+    width: 256, 
+    height: 240, 
+    scene: [StartMenu, GamePlay, EndgameMenu],  
 	antialias: false,
-	render:{pixelArt:true},
+    render:{pixelArt:true},
 	scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -13,11 +13,11 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: {y: 0},
-			debug: true
+			debug: false
         }
-    }
-
-
+    },
 };
 
 var juego = new Phaser.Game(config);
+var customDeltaTime = 1;
+var framerate = 60; 
