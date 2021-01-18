@@ -113,45 +113,49 @@ class Player {
             return;
         }
         // Darle prioridad al boost para poder pulsar espacio + shift en el modo boost
-        if(inputs.B_Key.isDown){
-            this.state = this.PlayerState.RUNNING_BOOST;
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
-        } else if (inputs.A_Key.isDown){ 
-            this.maxSpeedX = this.maxSpeedXNormal;   
-            this.speedX += this.accelerationRate;
-            this.state = this.PlayerState.RUNNING;
-            if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
-                this.currentHeat += this.overheatRate * customDeltaTime;
+        if(!this.hasFinished){
+                
+            if(inputs.B_Key.isDown){
+                this.state = this.PlayerState.RUNNING_BOOST;
+                this.speedX += this.accelerationRate;
+                this.maxSpeedX = this.maxSpeedXBoost;
+                if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+            } else if (inputs.A_Key.isDown){ 
+                this.maxSpeedX = this.maxSpeedXNormal;   
+                this.speedX += this.accelerationRate;
+                this.state = this.PlayerState.RUNNING;
+                if (this.currentHeat < 0.5 && !this.isOnAir && !this.isOnRamp) {
+                    this.currentHeat += this.overheatRate * customDeltaTime;
+                }
             }
-        }
-        else if(inputs.B_Key.isDown){
-            this.speedX += this.accelerationRate;
-            this.maxSpeedX = this.maxSpeedXBoost;
-            if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
-        }
-        else if(this.speedX > 0) {
-            this.speedX -= this.accelerationRate;
-            this.state = this.PlayerState.SLOWING_DOWN;
-        }
-        
-        if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
-        
-        if(this.isSpeedReduced){
-            this.maxSpeedX = this.maxSpeedXReduced;
-            this.state = this.PlayerState.REDUCED_SPEED;
-        }
-        
-        if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
-            this.speedX = 0;
-            this.state = this.PlayerState.STOPED;
-            this.sprite.setTexture('pilotStanding');
-        }
-        else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+            else if(inputs.B_Key.isDown){
+                this.speedX += this.accelerationRate;
+                this.maxSpeedX = this.maxSpeedXBoost;
+                if(this.currentHeat < 1) this.currentHeat += this.overheatRate*1.5 * customDeltaTime;
+            }
+            else if(this.speedX > 0) {
+                this.speedX -= this.accelerationRate;
+                this.state = this.PlayerState.SLOWING_DOWN;
+            }
+            
+            if(this.currentLine == this.lines.length-1) this.isSpeedReduced = true;
+            
+            if(this.isSpeedReduced){
+                this.maxSpeedX = this.maxSpeedXReduced;
+                this.state = this.PlayerState.REDUCED_SPEED;
+            }
+            
+            if(this.speedX <= 0){ //si velocitat menor que 0 la posem a 0
+                this.speedX = 0;
+                this.state = this.PlayerState.STOPED;
+                this.sprite.setTexture('pilotStanding');
+            }
+            else if(this.speedX > this.maxSpeedX){ //sino " i la velocitat major que la maxima la posem a maxima
+                this.speedX = this.maxSpeedX;
+            }
+        }else{
             this.speedX = this.maxSpeedX;
-        }
-        
+        }    
         //Y velocity
         if(this.isFalling){ //jugador esta caient
             if(this.isOnRamp == true){
@@ -475,15 +479,17 @@ class Player {
     }
 
     crash() { // Generic Crash
-        this.isOnCrash = true;
-        this.crashHandled = false;
-        this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
-        this.speedX = 0;
-        this.state = this.PlayerState.CRASHED;
-        if(this.isOverHeated) {
-            this.sprite.setTexture('pilotStanding');
-        } else {
-            this.sprite.anims.play('loop', true);
+        if(!this.hasFinished){
+            this.isOnCrash = true;
+            this.crashHandled = false;
+            this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
+            this.speedX = 0;
+            this.state = this.PlayerState.CRASHED;
+            if(this.isOverHeated) {
+                this.sprite.setTexture('pilotStanding');
+            } else {
+                this.sprite.anims.play('loop', true);
+            }
         }
     }
 

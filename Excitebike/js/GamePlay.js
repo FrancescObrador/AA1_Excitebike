@@ -148,10 +148,13 @@ class GamePlay extends Phaser.Scene{
             if(this.pilotMapPosition >= this.goal.end && !this.endCallMade)  // finish reached
             {
                 this.pilot.playCustomSong(this.pilot.PlayerState.RUNNING);
+                this.pilot.hasFinished = true;
                 //this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
                 this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
                 this.endCallMade = true;
-            } else {
+            } else if(this.pilotMapPosition >= this.goal.end && this.endCallMade) {
+                this.pilot.sprite.x += this.pilot.speedX * customDeltaTime;
+            }else{
                 this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
                 this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
         
