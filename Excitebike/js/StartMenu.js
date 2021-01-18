@@ -24,7 +24,6 @@ class StartMenu extends Phaser.Scene{
         this.load.audio('cursor_move', ruta + 'move_cursor.wav');
         this.load.audio('title_screen', ruta + 'title_screen.wav');
         this.load.audio('start_engines', ruta + 'start_your_engines.wav');
-        this.load.audio('start_counter', ruta + 'start_beep.wav');
 	}
 
 	create(){
@@ -46,6 +45,7 @@ class StartMenu extends Phaser.Scene{
 		this.cursorPositions = new Array(0);
 		this.cursor = this.add.image(0, this.cursorPositions[0], 'cursor').setScale(0.25).setOrigin(0);
 		this.LoadStartScreen();
+		this.game.sound.stopAll();
 		this.soundsTable['mainMusic'].play(); // No se porque no suena en el momento lol
 	}
 	

@@ -23,13 +23,14 @@ class Player {
         this.speedY = 30;
         this.jumpStr = 2;
         this.maxSpeedXReduced = 100;
-        this.maxSpeedXNormal = 1000;
-        this.maxSpeedXBoost = 250;
+        this.maxSpeedXNormal = 200;
+        this.maxSpeedXBoost = 10000;
         this.isOnRampError = 0.25;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
-       
+        
         // States
+        this.hasFinished = false;
         this.isTurning = false;
         this.isOnAir = false;
         this.isFalling = false;
@@ -101,8 +102,6 @@ class Player {
 
         if(this.currentHeat == 1){
             //TODO Implement "Crash"
-
-            this.state = this.PlayerState.CRASHED;
             // Overheat Handle
             this.isOverHeated = true;
             this.crash();
@@ -480,7 +479,7 @@ class Player {
         this.crashHandled = false;
         this.currScene.physics.moveTo(this.sprite, this.OriginalXPos, this.lines[this.lines.length-1], this.speedY);
         this.speedX = 0;
-
+        this.state = this.PlayerState.CRASHED;
         if(this.isOverHeated) {
             this.sprite.setTexture('pilotStanding');
         } else {
@@ -527,7 +526,7 @@ class Player {
         this.soundsTable['acc_none'] = juego.sound.add('sfx_acc_none', {loop: true});
         this.soundsTable['jump_normal'] = juego.sound.add('sfx_jump_normal');
         this.soundsTable['jump_super'] = juego.sound.add('sfx_jump_super');
-        this.soundsTable['crash'] = juego.sound.add('sfx_crash', {loop: true});
+        this.soundsTable['crash'] = juego.sound.add('sfx_crash');
 
        
     }
@@ -565,6 +564,34 @@ class Player {
 
     }
 
+
+    playCustomSong(state){
+        this.soundsTable['acc_normal'].stop();
+        this.soundsTable['acc_boost'].stop();
+        this.soundsTable['acc_reduced'].stop();
+        this.soundsTable['acc_none'].stop();
+        this.soundsTable['crash'].stop();
+        switch(this.state){
+            case this.PlayerState.STOPED:
+                this.soundsTable['acc_none'].play();
+                break;
+            case this.PlayerState.RUNNING:
+                this.soundsTable['acc_normal'].play();
+                break;
+            case this.PlayerState.SLOWING_DOWN:
+                this.soundsTable['acc_reduced'].play();
+                break;
+            case this.PlayerState.CRASHED:
+                this.soundsTable['crash'].play();
+                break;
+            case this.PlayerState.RUNNING_BOOST:
+                this.soundsTable['acc_boost'].play();
+                break;
+            case this.PlayerState.REDUCED_SPEED:
+                this.soundsTable['acc_reduced'].play();
+                break;
+        }
+    }
     preUpdate(){
 
     } 

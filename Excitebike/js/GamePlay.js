@@ -9,7 +9,10 @@ class GamePlay extends Phaser.Scene{
         this.load.image('backGroundLap2', ruta + 'excitebike_map_1_2.png'); 
         this.load.image('backGroundLap3', ruta + 'excitebike_map_1_3.png'); 
         this.load.image('hud', ruta + 'HUD.png'); 
- 
+
+		ruta = 'assets/sounds/';
+        this.load.audio('start_beep', ruta + 'start_beep.wav');
+
         
 
         Player.loadAssets(this);
@@ -24,6 +27,8 @@ class GamePlay extends Phaser.Scene{
     
     create(){
 
+        this.soundsTable = {};
+        this.soundsTable['start_counter'] = this.sound.add('start_beep');
         // OBSTACLES XML
         var list = this.cache.xml.get('obsts');
         var obstacles = list.getElementsByTagName('obstacle');
@@ -79,7 +84,7 @@ class GamePlay extends Phaser.Scene{
         this.finalTime = 0;
 
         // HUD
-        this.countdownTime = 15.0;
+        this.countdownTime = 10.0;
         this.timer = 0;
         this.hudTimer = this.add.bitmapText(config.width/1.25, config.height - 22, 'nesFont', "", 10).setOrigin(0.5).setScale(0.75);
 
@@ -94,6 +99,9 @@ class GamePlay extends Phaser.Scene{
         this.ChangePauseState();
         this.isInforcedPause = true;
         this.inputs.P_Key.on('up', this.ChangePauseState, this); 
+
+        this.beepHasPlayed = false;
+        this.endCallMade = false;
     } 
  
     ChangePauseState(){ 
@@ -102,20 +110,24 @@ class GamePlay extends Phaser.Scene{
     }
 
     update(){
-        
+        console.clear();
         customDeltaTime = 1.0 / juego.loop.actualFps;
 
         if(this.isInforcedPause){
             this.timer += customDeltaTime;
             console.log(this.timer);
-            if(this.timer >= this.countdownTime-15) {
+            if(this.timer >= 8.0 && !this.beepHasPlayed) {
+                this.beepHasPlayed = true;
+                this.soundsTable['start_counter'].play();
+            }
+            if(this.timer >= this.countdownTime) {
                 this.isInforcedPause = false;
                 this.ChangePauseState();
                 this.timer = 0;
             }
         }
 
-        if(!this.isPaused){
+        if(!this.isPaused && !this.isInforcedPause){
             this.timer += customDeltaTime;
             this.pilot.customUpdate(this.inputs);
  
@@ -133,10 +145,12 @@ class GamePlay extends Phaser.Scene{
     
             this.overHeatTextHandler(); 
     
-            if(this.pilotMapPosition >= this.goal.end)  // finish reached
+            if(this.pilotMapPosition >= this.goal.end && !this.endCallMade)  // finish reached
             {
-                this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
+                this.pilot.playCustomSong(this.pilot.PlayerState.RUNNING);
+                //this.physics.moveTo(this.pilot.sprite, config.width, this.pilot.sprite.y, this.pilot.speedY);
                 this.delay = this.time.delayedCall(3000, this.loadRanking, [], this);
+                this.endCallMade = true;
             } else {
                 this.backGround.x -= (this.pilot.speedX * customDeltaTime);     // container scroll  
                 this.pilotMapPosition += (this.pilot.speedX * customDeltaTime); // "real" pilot position
