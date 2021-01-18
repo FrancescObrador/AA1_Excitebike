@@ -23,7 +23,7 @@ class Player {
         this.speedY = 30;
         this.jumpStr = 2;
         this.maxSpeedXReduced = 100;
-        this.maxSpeedXNormal = 200;
+        this.maxSpeedXNormal = 1000;
         this.maxSpeedXBoost = 250;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
@@ -478,6 +478,7 @@ class Player {
         this.soundsTable['jump_normal'] = juego.sound.add('sfx_jump_normal');
         this.soundsTable['jump_super'] = juego.sound.add('sfx_jump_super');
         this.soundsTable['crash'] = juego.sound.add('sfx_crash', {loop: true});
+
        
     }
 

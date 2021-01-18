@@ -22,12 +22,17 @@ class StartMenu extends Phaser.Scene{
 
 		ruta = 'assets/sounds/';
         this.load.audio('cursor_move', ruta + 'move_cursor.wav');
+        this.load.audio('title_screen', ruta + 'title_screen.wav');
+        this.load.audio('start_engines', ruta + 'start_your_engines.wav');
+        this.load.audio('start_counter', ruta + 'start_beep.wav');
 	}
 
 	create(){
 
 		this.soundsTable = {};
-        this.soundsTable['cursor'] = juego.sound.add('cursor_move');
+        this.soundsTable['cursor'] = this.sound.add('cursor_move');
+        this.soundsTable['mainMusic'] = this.sound.add('title_screen', {loop: true});
+        this.soundsTable['startEngines'] = this.sound.add('start_engines');
 		// Setup inputs
 		this.inputs = new InputManager(this);
 		this.inputs.Up_Key.on('up', this.CursorUp, this);
@@ -41,6 +46,7 @@ class StartMenu extends Phaser.Scene{
 		this.cursorPositions = new Array(0);
 		this.cursor = this.add.image(0, this.cursorPositions[0], 'cursor').setScale(0.25).setOrigin(0);
 		this.LoadStartScreen();
+		this.soundsTable['mainMusic'].play(); // No se porque no suena en el momento lol
 	}
 	
 	update(){
@@ -50,7 +56,6 @@ class StartMenu extends Phaser.Scene{
 
 	LoadStartScreen()
 	{
-		
 		console.log("loading start screen");
 		
 		this.menu = this.add.image(0, 0, 'initialScreen').setScale(0.25).setOrigin(0);
@@ -92,6 +97,8 @@ class StartMenu extends Phaser.Scene{
 		}
 		else if (this.currentScreen == screens.TRACKS){
 			this.scene.start("GamePlay");
+			this.soundsTable['mainMusic'].stop();
+			this.soundsTable['startEngines'].play();
 			this.scene.stop("StartMenu");
 		}
 	}

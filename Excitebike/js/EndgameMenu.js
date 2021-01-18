@@ -17,12 +17,19 @@ class EndgameMenu extends Phaser.Scene{
 		this.load.image('podium4', ruta + "podium_4.png");
 		this.load.spritesheet('winner', ruta + 'winner.png', {frameWidth: 16/2, frameHeight: 16});
 
+		
+		ruta = 'assets/sounds/';
+		this.load.audio('victoryTheme', ruta + 'victory_stand.wav');
+		
+		
 		this.textColor = "0x5ce430";	// Bright green
 
 		this.bestTimes = "1:16:00";	//Excitebike times
 		this.bestTimesInFloat = [76, 86, 96, 106, 116, 126, 136, 146, 156, 166, 176, 186]; 	// rank times
 
 		this.position = "#";
+
+
 
 		for(var i = 1; i <= this.bestTimesInFloat.length; i++){
 			if(this.yourTime <= this.bestTimesInFloat[i-1]){
@@ -36,10 +43,18 @@ class EndgameMenu extends Phaser.Scene{
 
 		this.load.bitmapFont('nesFont', 'assets/fonts/nes_font_0.png', 'assets/fonts/nes_font.xml');
 
+		
+		
+
 		console.log("Resources loaded!");
 	}
 
 	create(){
+
+		this.soundsTable = {};
+		// TODO: No se si es loop o no
+        this.soundsTable['victory'] = this.sound.add('victoryTheme', {loop: true});
+
 		// Setup inputs
 		this.inputs = new InputManager(this);
 		this.inputs.A_Key.on('up', this.loadStartMenu, this);
@@ -79,6 +94,8 @@ class EndgameMenu extends Phaser.Scene{
 	}
 
 	loadPodium(podiumPos) {
+		this.game.sound.stopAll();
+		this.soundsTable["victory"].play();
 		switch(podiumPos){
 			case 1: 
 				this.podium = this.add.sprite(config.width/2, config.height/4.25, 'podium1').setOrigin(0.65, 0);
