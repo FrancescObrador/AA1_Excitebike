@@ -24,7 +24,7 @@ class Player {
         this.jumpStr = 2;
         this.maxSpeedXReduced = 100;
         this.maxSpeedXNormal = 200;
-        this.maxSpeedXBoost = 10000;
+        this.maxSpeedXBoost = 250;
         this.isOnRampError = 0.25;
         this.maxSpeedX = this.maxSpeedXNormal;
         this.currentLine = newLine;
@@ -100,7 +100,7 @@ class Player {
 
         if(this.currentHeat > this.baseHeat) this.currentHeat -= this.overheatRate/2 * customDeltaTime;
 
-        if(this.currentHeat == 1){
+        if(this.currentHeat >= 1 && !this.isOnAir && !this.isOnRamp){
             //TODO Implement "Crash"
             // Overheat Handle
             this.isOverHeated = true;
